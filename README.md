@@ -37,7 +37,10 @@ Here is a short example of using `PSAISuite` to generate chat completion respons
 # Import the module
 Import-Module PSAISuite
 
-$models=@("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620")
+$env:AzureAIKey = "your-azure-ai-key"
+$env:AzureAIEndpoint = "your-azure-ai-endpoint"
+
+$models = @("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620", "azureai:gpt-4o")
 
 $prompt="What is the capital of France?"
 
