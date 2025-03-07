@@ -33,12 +33,16 @@ $env:AnthropicKey="your-anthropic-api-key"
 
 Here is a short example of using `PSAISuite` to generate chat completion responses from gpt-4o and claude-3-5-sonnet.
 
+For AzureAI, you will need to set the `AzureAIKey` and `AzureAIEndpoint` environment variables.
+
+```powershell
+$env:AzureAIKey = "your-azure-ai-key"
+$env:AzureAIEndpoint = "your-azure-ai-endpoint"
+```
+
 ```powershell
 # Import the module
 Import-Module PSAISuite
-
-$env:AzureAIKey = "your-azure-ai-key"
-$env:AzureAIEndpoint = "your-azure-ai-endpoint"
 
 $models = @("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620", "azureai:gpt-4o")
 
