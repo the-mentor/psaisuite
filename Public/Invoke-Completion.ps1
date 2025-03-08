@@ -17,6 +17,9 @@ The model to be used for the completion request, specified in 'provider:model' f
 A switch parameter that, if specified, returns only the response text. If not specified, a custom object containing 
 the response text, model information, and timestamp is returned.
 
+.PARAMETER IncludeElapsedTime
+A switch parameter that, if specified, measures and includes the elapsed time of the API request in the output.
+
 .EXAMPLE
 Invoke-Completion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini"
 
@@ -26,6 +29,11 @@ Sends the prompt "Hello, world!" to the OpenAI GPT-4o-mini model and returns the
 Invoke-Completion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini" -TextOnly
 
 Sends the prompt "Hello, world!" to the OpenAI GPT-4o-mini model and returns only the completion response text.
+
+.EXAMPLE
+Invoke-Completion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini" -IncludeElapsedTime
+
+Sends the prompt and returns the completion response with the elapsed time information.
 
 .NOTES
 The function dynamically constructs the provider-specific function name based on the provider specified in the Model 
@@ -38,7 +46,8 @@ function Invoke-Completion {
         [Parameter(Mandatory)]
         [string]$Prompt,
         [string]$Model = "openai:gpt-4o-mini",
-        [switch]$TextOnly
+        [switch]$TextOnly,
+        [switch]$IncludeElapsedTime
     )
     
     # Parse provider and model from the Model parameter
@@ -58,21 +67,46 @@ function Invoke-Completion {
         throw "Unsupported provider: $provider. No function named $providerFunction found."
     }
     
+    # Start measuring execution time if requested
+    if ($IncludeElapsedTime) {
+        $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    }
+    
     # Invoke the provider-specific implementation
     $responseText = & $providerFunction $modelName $Prompt
     
+    # Stop measuring execution time if requested
+    if ($IncludeElapsedTime) {
+        $stopwatch.Stop()
+        $elapsedTime = $stopwatch.Elapsed
+    }
+    
     # Return the result based on the TextOnly switch
     if ($TextOnly) {
-        return $responseText
+        # Format the text output to include the elapsed time if requested
+        if ($IncludeElapsedTime) {
+            return "$responseText`n`nElapsed Time: $($elapsedTime.ToString('hh\:mm\:ss\.fff'))"
+        }
+        else {
+            return $responseText
+        }
     }
     else {
-        # Return a custom object with both the response and model information
-        return [PSCustomObject]@{
+        # Create the base response object
+        $responseObject = [PSCustomObject]@{
+            Prompt    = $Prompt
             Response  = $responseText
             Model     = $Model
             Provider  = $provider
             ModelName = $modelName
             Timestamp = Get-Date
         }
+        
+        # Add elapsed time if requested
+        if ($IncludeElapsedTime) {
+            $responseObject | Add-Member -MemberType NoteProperty -Name 'ElapsedTime' -Value $elapsedTime
+        }
+        
+        return $responseObject
     }
 }
