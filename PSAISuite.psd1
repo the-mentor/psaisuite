@@ -11,7 +11,7 @@
     # Author of this module
     Author            = 'Doug Finke'
     
-    Copyright          = '© 2025 All rights reserved.'
+    Copyright         = '© 2025 All rights reserved.'
     
     # Description of the functionality provided by this module
     Description       = 'PowerShell module for simple, unified interface to multiple Generative AI providers'
@@ -35,13 +35,13 @@
     PrivateData       = @{
         PSData = @{
             # Tags applied to this module
-            Tags = @('AI', 'OpenAI', 'Anthropic', 'GPT', 'Claude','PowerShell')
+            Tags       = @('AI', 'OpenAI', 'Anthropic', 'GPT', 'Claude', 'PowerShell')
             
             # Project URI
-            # ProjectUri = ''
-            
+            ProjectUri = 'https://github.com/dfinke/PSAISuite'
+
             # License URI
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/dfinke/PSAISuite/blob/master/LICENSE'
         }
     }
 }
