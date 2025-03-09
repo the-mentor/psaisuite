@@ -3,7 +3,7 @@
 Invokes a completion request to a specified AI model provider.
 
 .DESCRIPTION
-The Invoke-Completion function sends a prompt to a specified AI model provider and returns the completion response. 
+The Invoke-ChatCompletion function sends a prompt to a specified AI model provider and returns the completion response. 
 The model provider and model name must be specified in the 'provider:model' format. The function dynamically constructs 
 the provider-specific function name and invokes it to get the response.
 
@@ -21,17 +21,17 @@ the response text, model information, and timestamp is returned.
 A switch parameter that, if specified, measures and includes the elapsed time of the API request in the output.
 
 .EXAMPLE
-Invoke-Completion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini"
+Invoke-ChatCompletion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini"
 
 Sends the prompt "Hello, world!" to the OpenAI GPT-4o-mini model and returns the completion response.
 
 .EXAMPLE
-Invoke-Completion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini" -TextOnly
+Invoke-ChatCompletion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini" -TextOnly
 
 Sends the prompt "Hello, world!" to the OpenAI GPT-4o-mini model and returns only the completion response text.
 
 .EXAMPLE
-Invoke-Completion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini" -IncludeElapsedTime
+Invoke-ChatCompletion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini" -IncludeElapsedTime
 
 Sends the prompt and returns the completion response with the elapsed time information.
 
@@ -40,7 +40,7 @@ The function dynamically constructs the provider-specific function name based on
 parameter. If the provider function does not exist, an error is thrown.
 
 #>
-function Invoke-Completion {
+function Invoke-ChatCompletion {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
