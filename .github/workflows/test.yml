@@ -19,9 +19,9 @@ jobs:
     
     - name: Setup PowerShell Core
       if: matrix.os != 'windows-latest'
-      uses: pwsh/action-setup-pwsh@v1
+      uses: pwsh/action-setup-pwsh@v2
       with:
-        pwsh-version: '7.x'
+        pwsh-version: '7.2.x'
     
     - name: Install Pester
       shell: pwsh
