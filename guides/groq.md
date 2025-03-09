@@ -21,7 +21,7 @@ In your code:
 Import-Module PSAISuite
 
 $provider = "groq"
-$model_id = "llama-3.2-8b-instruct"
+$model_id = "llama3-70b-8192"
 
 # Create the model identifier
 $model = "{0}:{1}" -f $provider, $model_id
@@ -32,8 +32,8 @@ Invoke-Completion -Prompt "What is the capital of France?" -Model $model
 ```shell
 Prompt    : What is the capital of France?
 Response  : The capital of France is Paris.
-Model     : groq:llama-3.2-8b-instruct
+Model     : groq:llama3-70b-8192
 Provider  : groq
-ModelName : llama-3.2-8b-instruct
-Timestamp : Sun 03 09 2025 10:15:30 AM
+ModelName : llama3-70b-8192
+Timestamp : Sun 03 09 2025 9:52:05 AM
 ```

@@ -7,11 +7,11 @@ Simple, unified interface to multiple Generative AI providers.
 Currently supported providers are:
 
 - [Anthropic](guides/antrhopic.md)
-- Azure AI Foundry
+- [Azure AI Foundry](guides/azureai.md)
 - [DeepSeek](guides/deepseek.md)
 - [Google](guides/google.md)
 - [Groq](guides/groq.md)
-- OpenAI
+- [OpenAI](guides/openai.md)
 - [xAI](guides/xai.md)
 
 ## In Action
