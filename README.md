@@ -49,8 +49,6 @@ $env:AzureAIEndpoint = "your-azure-ai-endpoint"
 
 Using `PSAISuite` to generate chat completion responses from gpt-4o and claude-3-5-sonnet.
 
-```
-
 ```powershell
 # Import the module
 Import-Module PSAISuite
@@ -60,11 +58,11 @@ $models = @("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620", "azureai:gp
 $prompt="What is the capital of France?"
 
 foreach($model in $models) {
-    Invoke-Completion -Prompt $prompt -Model $model
+    Invoke-ChatCompletion -Prompt $prompt -Model $model
 }
 ```
 
-Note that the model name in the Invoke-Completion call uses the format - `<provider>:<model-name>`.
+Note that the model name in the Invoke-ChatCompletion call uses the format - `<provider>:<model-name>`.
 
 ## Adding support for a provider
 
