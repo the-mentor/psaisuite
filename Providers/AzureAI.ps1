@@ -7,7 +7,7 @@
     It requires an API key to be set in the environment variable 'AzureAIKey' and an endpoint URL in 'AzureAIEndpoint'.
 
 .PARAMETER ModelName
-    The name of the Azure AI model to use (e.g., 'gpt-4', 'gpt-35-turbo').
+    The name of the Azure AI model to use (e.g., 'gpt-4', 'gpt-35-turbo'). 
     Models available depend on your deployment configuration in Azure AI Studio.
 
 .PARAMETER Prompt
@@ -40,20 +40,27 @@ function Invoke-AzureAIProvider {
     $apiKey = $env:AzureAIKey
     $endpoint = $env:AzureAIEndpoint.TrimEnd('/')
     
+    # Determine API version based on the model
+    $apiVersion = "2023-05-15"
+    # Special handling for o3-mini model which requires a newer API version
+    if ($ModelName -eq "o3-mini") {
+        $apiVersion = "2024-12-01-preview"
+    }
+    
     # Construct the body based on the Azure OpenAI API format
     $body = @{
-        'messages'    = @(
+        'messages'              = @(
             @{
                 'role'    = 'user'
                 'content' = $Prompt
             }
         )
-        'max_tokens'  = 800
-        'temperature' = 0.7
+        'max_completion_tokens' = 800
+        # Removed temperature parameter as the API only supports the default value (1)
     }
 
     # Azure AI uses the API key in the header as api-key
-    $Uri = "$endpoint/openai/deployments/$ModelName/chat/completions?api-version=2023-05-15"
+    $Uri = "$endpoint/openai/deployments/$ModelName/chat/completions?api-version=$apiVersion"
     
     $params = @{
         Uri     = $Uri

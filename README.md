@@ -4,7 +4,15 @@ Simple, unified interface to multiple Generative AI providers.
 
 `PSAISuite` makes it easy for developers to use multiple LLM through a standardized interface. Using an interface similar to OpenAI's, `PSAISuite` makes it easy to interact with the most popular LLMs and compare the results. It is a thin wrapper around the LLM endpoint, and allows creators to seamlessly swap out and test responses from different LLM providers without changing their code. Today, the library is primarily focussed on chat completions. I will expand it cover more use cases in near future.
 
-Currently supported providers are - OpenAI, Anthropic, Google, DeepSeek, xAI
+Currently supported providers are:
+
+- [Anthropic](guides/antrhopic.md)
+- Azure AI Foundry
+- [DeepSeek](guides/deepseek.md)
+- [Google](guides/google.md)
+- [Groq](guides/groq.md)
+- OpenAI
+- [xAI](guides/xai.md)
 
 ## In Action
 
@@ -29,15 +37,18 @@ $env:OpenAIKey="your-openai-api-key"
 $env:AnthropicKey="your-anthropic-api-key"
 ```
 
-## Usage
+### Azure AI Foundry
 
-Here is a short example of using `PSAISuite` to generate chat completion responses from gpt-4o and claude-3-5-sonnet.
-
-For AzureAI, you will need to set the `AzureAIKey` and `AzureAIEndpoint` environment variables.
+You will need to set the `AzureAIKey` and `AzureAIEndpoint` environment variables.
 
 ```powershell
 $env:AzureAIKey = "your-azure-ai-key"
 $env:AzureAIEndpoint = "your-azure-ai-endpoint"
+
+## Usage
+
+Using `PSAISuite` to generate chat completion responses from gpt-4o and claude-3-5-sonnet.
+
 ```
 
 ```powershell
