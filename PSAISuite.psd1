@@ -3,7 +3,7 @@
     RootModule        = 'PSAISuite.psm1'
     
     # Version number of this module.
-    ModuleVersion     = '0.0.3'
+    ModuleVersion     = '0.1.0'
     
     # ID used to uniquely identify this module
     GUID              = 'f5a37b81-6a5a-4b5c-a6e1-2b8a5f9c2fd8'
@@ -11,7 +11,7 @@
     # Author of this module
     Author            = 'Doug Finke'
     
-    Copyright          = '© 2025 All rights reserved.'
+    Copyright         = '© 2025 All rights reserved.'
     
     # Description of the functionality provided by this module
     Description       = 'PowerShell module for simple, unified interface to multiple Generative AI providers'
@@ -20,7 +20,7 @@
     PowerShellVersion = '5.1'
     
     # Functions to export from this module
-    FunctionsToExport = @('Invoke-Completion')
+    FunctionsToExport = @('Invoke-ChatCompletion')
     
     # Cmdlets to export from this module
     CmdletsToExport   = @()
@@ -35,13 +35,13 @@
     PrivateData       = @{
         PSData = @{
             # Tags applied to this module
-            Tags = @('AI', 'OpenAI', 'Anthropic', 'GPT', 'Claude','PowerShell')
+            Tags       = @('AI', 'OpenAI', 'Anthropic', 'GPT', 'Claude', 'PowerShell')
             
             # Project URI
-            # ProjectUri = ''
-            
+            ProjectUri = 'https://github.com/dfinke/PSAISuite'
+
             # License URI
-            # LicenseUri = ''
+            LicenseUri = 'https://github.com/dfinke/PSAISuite/blob/master/LICENSE'
         }
     }
 }

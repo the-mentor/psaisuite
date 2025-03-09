@@ -21,10 +21,9 @@ $models = $(
     'llama-3.2-90b-vision-preview'
 )
 
-
 $models | ForEach-Object -Parallel {
     $model = $_
-    Invoke-Completion 'What is the capital of France?' groq:$model | Select-Object Model, Timestamp, Response
+    Invoke-ChatCompletion 'What is the capital of France?' groq:$model | Select-Object Model, Timestamp, Response
 } 
 
 ''

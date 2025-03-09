@@ -11,12 +11,13 @@ $models = $(
     'xai:grok-2-1212'
     'anthropic:claude-3-7-sonnet-20250219'
     'gemini:gemini-2.0-flash-exp'
-    'azureai:gpt-4o'
-    'deepseek:deepseek-chat'
+    # 'deepseek:deepseek-chat'
 )
 
 $prompt = "What is the capital of France?"
 
-foreach ($model in $models) {    
-    Invoke-Completion -Prompt $prompt $model -IncludeElapsedTime | Select-Object ElapsedTime, model, prompt, response
+foreach ($model in $models) {
+    Write-Host "Testing $model"
+    
+    Invoke-ChatCompletion -Prompt $prompt -Model $model
 }

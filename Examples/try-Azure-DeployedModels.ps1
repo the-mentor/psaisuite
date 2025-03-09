@@ -13,5 +13,5 @@ $deployedModels | ForEach-Object {
     $modelSlug = "{0}:{1}" -f $provider, $_
     
     # Invoke the completion function with the query "capital of France" and the model slug
-    Invoke-Completion "capital of France"  $modelSlug
+    Invoke-ChatCompletion "capital of France" $modelSlug
 }

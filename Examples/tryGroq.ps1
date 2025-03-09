@@ -9,5 +9,5 @@ $groqModels = $(
 )
 
 $groqModels | ForEach-Object {
-    Invoke-Completion "capital of france" "groq:$_"
+    Invoke-ChatCompletion "capital of france" "groq:$_"
 } | Select-Object Model, Response

@@ -19,5 +19,5 @@ $prompt = "What is the capital of France?"
 foreach ($model in $models) {
     Write-Host "Testing $model"
     
-    Invoke-Completion -Prompt $prompt -Model $model
+    Invoke-ChatCompletion -Prompt $prompt -Model $model
 }

@@ -26,7 +26,7 @@ $model_id = "deepseek-chat"
 # Create the model identifier
 $model = "{0}:{1}" -f $provider, $model_id
 
-Invoke-Completion -Prompt "What is the capital of France?" -Model $model
+Invoke-CodeCompletion -Prompt "What is the capital of France?" -Model $model
 ```
 
 ```shell
@@ -42,7 +42,7 @@ Timestamp : Sun 03 09 2025 9:34:29 AM
 You can also use DeepSeek's code models like `deepseek-coder` for programming tasks:
 
 ```powershell
-Invoke-Completion -Prompt "Write a quick binary search function in PowerShell" -Model "deepseek:deepseek-coder"
+Invoke-CodeCompletion -Prompt "Write a quick binary search function in PowerShell" -Model "deepseek:deepseek-coder"
 ```
 
 ```shell
