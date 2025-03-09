@@ -26,7 +26,7 @@ $model_id = "gpt-4o"
 # Create the model identifier
 $model = "{0}:{1}" -f $provider, $model_id
 
-Invoke-Completion -Prompt "What is the capital of France?" -Model $model
+Invoke-ChatCompletion -Prompt "What is the capital of France?" -Model $model
 ```
 
 ```shell

@@ -27,7 +27,7 @@ $model_id = "gpt-4o"  # Use the model you've deployed on your Azure AI service
 # Create the model identifier
 $model = "{0}:{1}" -f $provider, $model_id
 
-Invoke-Completion -Prompt "What is the capital of France?" -Model $model
+Invoke-ChatCompletion -Prompt "What is the capital of France?" -Model $model
 ```
 
 ```shell
