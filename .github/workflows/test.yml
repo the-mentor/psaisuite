@@ -1,0 +1,37 @@
+name: Test PSAISuite
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup PowerShell Core
+      if: matrix.os != 'windows-latest'
+      uses: pwsh/action-setup-pwsh@v1
+      with:
+        pwsh-version: '7.x'
+    
+    - name: Install Pester
+      shell: pwsh
+      run: |
+        Install-Module -Name Pester -Force -SkipPublisherCheck
+        
+    - name: Run Tests
+      shell: pwsh
+      run: |
+        $config = New-PesterConfiguration
+        $config.Run.Path = "./__tests__"
+        $config.Output.Verbosity = "Detailed"
+        Invoke-Pester -Configuration $config
