@@ -1,0 +1,17 @@
+# Import the PSAISuite module from the parent directory of the script's root directory
+Import-Module $PSScriptRoot\..\PSAISuite.psd1 -Force
+
+# Define the provider as 'azureai'
+$provider = 'azureai'
+
+# Define an array of deployed models
+$deployedModels = 'gpt-4o', 'o1-mini', 'o3-mini'
+
+# Iterate over each model in the deployedModels array
+$deployedModels | ForEach-Object {
+    # Format the model slug by combining the provider and the model name
+    $modelSlug = "{0}:{1}" -f $provider, $_
+    
+    # Invoke the completion function with the query "capital of France" and the model slug
+    Invoke-Completion "capital of France"  $modelSlug
+}
