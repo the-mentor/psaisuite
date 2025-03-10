@@ -26,7 +26,8 @@ function Invoke-GeminiProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [string]$Role = 'user'
     )
     
     if (-not $env:GeminiKey) {
@@ -38,7 +39,7 @@ function Invoke-GeminiProvider {
     $body = @{
         'contents' = @(
             @{
-                'role'  = 'user'
+                'role'  = $Role
                 'parts' = @(
                     @{
                         'text' = $Prompt

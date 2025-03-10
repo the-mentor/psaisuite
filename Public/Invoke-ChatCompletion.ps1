@@ -20,6 +20,9 @@ the response text, model information, and timestamp is returned.
 .PARAMETER IncludeElapsedTime
 A switch parameter that, if specified, measures and includes the elapsed time of the API request in the output.
 
+.PARAMETER Role
+The role of the message sender, defaults to 'user'.
+
 .EXAMPLE
 Invoke-ChatCompletion -Prompt "Hello, world!" -Model "openai:gpt-4o-mini"
 
@@ -47,7 +50,8 @@ function Invoke-ChatCompletion {
         [string]$Prompt,
         [string]$Model = "openai:gpt-4o-mini",
         [switch]$TextOnly,
-        [switch]$IncludeElapsedTime
+        [switch]$IncludeElapsedTime,
+        [string]$Role = 'user'
     )
     
     # Parse provider and model from the Model parameter
@@ -73,7 +77,7 @@ function Invoke-ChatCompletion {
     }
     
     # Invoke the provider-specific implementation
-    $responseText = & $providerFunction $modelName $Prompt
+    $responseText = & $providerFunction $modelName $Prompt $Role
     
     # Stop measuring execution time if requested
     if ($IncludeElapsedTime) {

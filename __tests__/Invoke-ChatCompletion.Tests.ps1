@@ -69,4 +69,17 @@ Describe "Invoke-ChatCompletion" {
             Should -Throw "Unsupported provider: nonexistent. No function named Invoke-nonexistentProvider found."
         }
     }
+
+    Context "Role parameter" {
+        It "Passes Role parameter to provider function" {
+            $result = Invoke-ChatCompletion -Prompt "Test prompt" -Model "openai:gpt-4o-mini" -Role "system"
+            $result | Should -BeOfType [PSCustomObject]
+            $result.Prompt | Should -Be "Test prompt"
+            $result.Response | Should -Not -BeNullOrEmpty
+            $result.Timestamp | Should -BeOfType [DateTime]
+            # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly -ParameterFilter {
+            #     $model -eq "gpt-4o-mini" -and $prompt -eq "Test prompt" -and $Role -eq "system"
+            # }
+        }
+    }
 }

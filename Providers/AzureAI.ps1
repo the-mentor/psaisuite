@@ -26,7 +26,8 @@ function Invoke-AzureAIProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [string]$Role = 'user'
     )
     
     if (-not $env:AzureAIKey) {
@@ -51,7 +52,7 @@ function Invoke-AzureAIProvider {
     $body = @{
         'messages'              = @(
             @{
-                'role'    = 'user'
+                'role'    = $Role
                 'content' = $Prompt
             }
         )

@@ -24,7 +24,8 @@ function Invoke-DeepSeekProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [string]$Role = 'user'
     )
     
     $headers = @{
@@ -36,7 +37,7 @@ function Invoke-DeepSeekProvider {
         'model'    = $ModelName
         'messages' = @(
             @{
-                'role'    = 'user'
+                'role'    = $Role
                 'content' = $Prompt
             }
         )

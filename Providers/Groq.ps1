@@ -27,7 +27,8 @@ function Invoke-GroqProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [string]$Role = 'user'
     )
     
     $headers = @{
@@ -40,7 +41,7 @@ function Invoke-GroqProvider {
         'max_tokens' = 1024  # Hard-coded for Groq
         'messages'   = @(
             @{
-                'role'    = 'user'
+                'role'    = $Role
                 'content' = $Prompt
             }
         )

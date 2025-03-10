@@ -25,7 +25,8 @@ function Invoke-OpenAIProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [string]$Role = 'user'
     )
     
     $headers = @{
@@ -38,7 +39,7 @@ function Invoke-OpenAIProvider {
         'model'    = $ModelName
         'messages' = @(
             @{
-                'role'    = 'user'
+                'role'    = $Role
                 'content' = $Prompt
             }
         )

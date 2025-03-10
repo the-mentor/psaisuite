@@ -26,7 +26,8 @@ function Invoke-AnthropicProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [string]$Role = 'user'
     )
     
     $headers = @{
@@ -40,7 +41,7 @@ function Invoke-AnthropicProvider {
         'max_tokens' = 1024  # Hard-coded for Anthropic
         'messages'   = @(
             @{
-                'role'    = 'user'
+                'role'    = $Role
                 'content' = $Prompt
             }
         )
