@@ -12,6 +12,10 @@
 .PARAMETER Prompt
     The text prompt to send to the model.
 
+.PARAMETER SystemRole
+    This parameter allows you to overwrite the default system role by passing a     
+    hashtable containing the system role information with keys 'role' and 'content'.
+
 .EXAMPLE
     $response = Invoke-DeepSeekProvider -ModelName 'deepseek-coder' -Prompt 'Write a binary search algorithm in Python'
     
@@ -24,7 +28,16 @@ function Invoke-DeepSeekProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [ValidateScript({
+            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
+                return $true
+            }
+            else {
+                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
+            }
+        })]
+        [hashtable]$SystemRole
     )
     
     $headers = @{
@@ -35,6 +48,9 @@ function Invoke-DeepSeekProvider {
     $body = @{
         'model'    = $ModelName
         'messages' = @(
+            if($SystemRole) {
+                $SystemRole
+            }
             @{
                 'role'    = 'user'
                 'content' = $Prompt
