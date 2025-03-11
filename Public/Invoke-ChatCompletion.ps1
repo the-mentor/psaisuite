@@ -46,6 +46,7 @@ function Invoke-ChatCompletion {
         [Parameter(Mandatory)]
         [string]$Prompt,
         [string]$Model = "openai:gpt-4o-mini",
+        [hashtable]$SystemRole,
         [switch]$TextOnly,
         [switch]$IncludeElapsedTime
     )
@@ -73,7 +74,16 @@ function Invoke-ChatCompletion {
     }
     
     # Invoke the provider-specific implementation
-    $responseText = & $providerFunction $modelName $Prompt
+    $functionParams = @{
+        ModelName = $modelName
+        Prompt = $Prompt
+    }
+
+    if($SystemRole) {
+        $functionParams.SystemRole = $SystemRole
+    }
+
+    $responseText = & $providerFunction @functionParams
     
     # Stop measuring execution time if requested
     if ($IncludeElapsedTime) {
@@ -105,6 +115,10 @@ function Invoke-ChatCompletion {
         # Add elapsed time if requested
         if ($IncludeElapsedTime) {
             $responseObject | Add-Member -MemberType NoteProperty -Name 'ElapsedTime' -Value $elapsedTime
+        }
+
+        if ($SystemRole) {
+            $responseObject | Add-Member -MemberType NoteProperty -Name 'SystemRole' -Value $SystemRole
         }
         
         return $responseObject
