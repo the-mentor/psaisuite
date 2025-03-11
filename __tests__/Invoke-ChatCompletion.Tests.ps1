@@ -44,6 +44,19 @@ Describe "Invoke-ChatCompletion" {
             #     $model -eq "claude-3-sonnet-20240229" -and $prompt -eq "Test prompt"
             # }
         }
+
+        It "Uses specified SystemRole when provided" {
+            $systemRole = @{
+                role = "system"
+                content = "you are a helpful powershell assistant, reply only with commands"
+            }
+
+            $result = Invoke-ChatCompletion -Prompt "Test prompt" -SystemRole $systemRole 
+            $result | Should -BeOfType [PSCustomObject]
+            $result.Prompt | Should -Be "Test prompt"
+            $result.Response | Should -Not -BeNullOrEmpty
+            $result.SystemRole | Should -Be $systemRole
+        }
     }
 
     Context "Elapsed time tracking" {
