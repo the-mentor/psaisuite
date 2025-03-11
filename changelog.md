@@ -1,3 +1,8 @@
+# v0.1.1
+
+- Added Mistral provider
+- Added documentation for using Mistral models
+- See [guides](guides/mistral.md) for Mistral setup and usage
 
 # v0.1.0
 
