@@ -1,5 +1,9 @@
 # v0.1.1
 
+- Added Nebius provider
+- Added documentation for using Nebius models
+- See [guides](guides/nebius.md) for Nebius setup and usage
+
 - Added Mistral provider
 - Added documentation for using Mistral models
 - See [guides](guides/mistral.md) for Mistral setup and usage
