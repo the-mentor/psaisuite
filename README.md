@@ -12,6 +12,7 @@ Currently supported providers are:
 - [Google](guides/google.md)
 - [Groq](guides/groq.md)
 - [Mistral](guides/mistral.md)
+- [Nebius](guides/nebius.md)
 - [OpenAI](guides/openai.md)
 - [xAI](guides/xai.md)
 
@@ -36,6 +37,8 @@ Set the API keys.
 ```powershell
 $env:OpenAIKey="your-openai-api-key"
 $env:AnthropicKey="your-anthropic-api-key"
+$env:NebiusKey="your-nebius-api-key"
+# ... and so on for other providers
 ```
 
 ### Azure AI Foundry
@@ -45,16 +48,17 @@ You will need to set the `AzureAIKey` and `AzureAIEndpoint` environment variable
 ```powershell
 $env:AzureAIKey = "your-azure-ai-key"
 $env:AzureAIEndpoint = "your-azure-ai-endpoint"
+```
 
 ## Usage
 
-Using `PSAISuite` to generate chat completion responses from gpt-4o and claude-3-5-sonnet.
+Using `PSAISuite` to generate chat completion responses from different providers.
 
 ```powershell
 # Import the module
 Import-Module PSAISuite
 
-$models = @("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620", "azureai:gpt-4o")
+$models = @("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620", "azureai:gpt-4o", "nebius:yandexgpt")
 
 $prompt="What is the capital of France?"
 
