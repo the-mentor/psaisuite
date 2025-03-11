@@ -13,6 +13,10 @@
 .PARAMETER Prompt
     The text prompt to send to the model.
 
+.PARAMETER SystemRole
+    This parameter allows you to overwrite the default system role by passing a     
+    hashtable containing the system role information with keys 'role' and 'content'.
+
 .EXAMPLE
     $response = Invoke-AzureAIProvider -ModelName 'gpt-4' -Prompt 'Explain quantum computing'
     
@@ -26,7 +30,16 @@ function Invoke-AzureAIProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [ValidateScript({
+            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
+                return $true
+            }
+            else {
+                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
+            }
+        })]
+        [hashtable]$SystemRole
     )
     
     if (-not $env:AzureAIKey) {
@@ -49,7 +62,10 @@ function Invoke-AzureAIProvider {
     
     # Construct the body based on the Azure OpenAI API format
     $body = @{
-        'messages'              = @(
+        'messages' = @(
+            if($SystemRole) {
+                $SystemRole
+            }
             @{
                 'role'    = 'user'
                 'content' = $Prompt
