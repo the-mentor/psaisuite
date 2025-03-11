@@ -11,6 +11,7 @@ Currently supported providers are:
 - [DeepSeek](guides/deepseek.md)
 - [Google](guides/google.md)
 - [Groq](guides/groq.md)
+- [Mistral](guides/mistral.md)
 - [OpenAI](guides/openai.md)
 - [xAI](guides/xai.md)
 
