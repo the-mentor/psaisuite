@@ -13,6 +13,10 @@
 .PARAMETER Prompt
     The text prompt to send to the model.
 
+.PARAMETER SystemRole
+    This parameter allows you to overwrite the default system role by passing a     
+    hashtable containing the system role information with keys 'role' and 'content'.
+
 .EXAMPLE
     $response = Invoke-GeminiProvider -ModelName 'gemini-1.5-pro' -Prompt 'Explain how CRISPR works'
     
@@ -26,7 +30,16 @@ function Invoke-GeminiProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [ValidateScript({
+            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
+                return $true
+            }
+            else {
+                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
+            }
+        })]
+        [hashtable]$SystemRole
     )
     
     if (-not $env:GeminiKey) {
@@ -46,6 +59,16 @@ function Invoke-GeminiProvider {
                 )
             }
         )
+    }
+    
+    if ($SystemRole) {
+        $body['system_instruction'] = @{
+            'parts' = @(
+                @{
+                    'text' = $SystemRole.content
+                }
+            )
+        }
     }
 
     # Gemini uses the API key as a URL parameter
