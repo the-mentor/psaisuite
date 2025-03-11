@@ -12,6 +12,10 @@
 .PARAMETER Prompt
     The text prompt to send to the model.
 
+.PARAMETER SystemRole
+    This parameter allows you to overwrite the default system role by passing a     
+    hashtable containing the system role information with keys 'role' and 'content'.
+
 .EXAMPLE
     $response = Invoke-AnthropicProvider -ModelName 'claude-3-opus' -Prompt 'Summarize the key events of World War II'
     
@@ -26,7 +30,16 @@ function Invoke-AnthropicProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt
+        [string]$Prompt,
+        [ValidateScript({
+            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
+                return $true
+            }
+            else {
+                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
+            }
+        })]
+        [hashtable]$SystemRole
     )
     
     $headers = @{
@@ -44,6 +57,10 @@ function Invoke-AnthropicProvider {
                 'content' = $Prompt
             }
         )
+    }
+
+    if ($SystemRole) {
+        $body['system'] = $SystemRole.content
     }
         
     $Uri = "https://api.anthropic.com/v1/messages"
