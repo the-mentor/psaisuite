@@ -10,15 +10,12 @@
     The name of the Azure AI model to use (e.g., 'gpt-4', 'gpt-35-turbo'). 
     Models available depend on your deployment configuration in Azure AI Studio.
 
-.PARAMETER Prompt
-    The text prompt to send to the model.
-
-.PARAMETER SystemRole
-    This parameter allows you to overwrite the default system role by passing a     
-    hashtable containing the system role information with keys 'role' and 'content'.
+.PARAMETER Messages
+    An array of hashtables containing the messages to send to the model.
 
 .EXAMPLE
-    $response = Invoke-AzureAIProvider -ModelName 'gpt-4' -Prompt 'Explain quantum computing'
+    $Message = New-ChatMessage -Prompt 'Explain quantum computing'
+    $response = Invoke-AzureAIProvider -ModelName 'gpt-4' -Message $Message 
     
 .NOTES
     Requires the AzureAIKey environment variable to be set with a valid API key.
@@ -30,16 +27,7 @@ function Invoke-AzureAIProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt,
-        [ValidateScript({
-            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
-                return $true
-            }
-            else {
-                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
-            }
-        })]
-        [hashtable]$SystemRole
+        [hashtable[]]$Messages
     )
     
     if (-not $env:AzureAIKey) {
@@ -62,15 +50,7 @@ function Invoke-AzureAIProvider {
     
     # Construct the body based on the Azure OpenAI API format
     $body = @{
-        'messages' = @(
-            if($SystemRole) {
-                $SystemRole
-            }
-            @{
-                'role'    = 'user'
-                'content' = $Prompt
-            }
-        )
+        'messages'              = $Messages
         'max_completion_tokens' = 800
         # Removed temperature parameter as the API only supports the default value (1)
     }
