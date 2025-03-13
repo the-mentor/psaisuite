@@ -10,15 +10,12 @@
     The name of the Gemini model to use (e.g., 'gemini-1.0-pro', 'gemini-2.0-flash-exp').
     Note: Use the exact model name as specified by Google without any prefix.
 
-.PARAMETER Prompt
-    The text prompt to send to the model.
-
-.PARAMETER SystemRole
-    This parameter allows you to overwrite the default system role by passing a     
-    hashtable containing the system role information with keys 'role' and 'content'.
+.PARAMETER Messages
+    An array of hashtables containing the messages to send to the model.
 
 .EXAMPLE
-    $response = Invoke-GeminiProvider -ModelName 'gemini-1.5-pro' -Prompt 'Explain how CRISPR works'
+    $Message = New-ChatMessage -Prompt 'Explain how CRISPR works'
+    $response = Invoke-GeminiProvider -ModelName 'gemini-1.5-pro' -Message $Message
     
 .NOTES
     Requires the GeminiKey environment variable to be set with a valid API key.
@@ -30,16 +27,7 @@ function Invoke-GeminiProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt,
-        [ValidateScript({
-            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
-                return $true
-            }
-            else {
-                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
-            }
-        })]
-        [hashtable]$SystemRole
+        [hashtable[]]$Messages
     )
     
     if (-not $env:GeminiKey) {
@@ -48,6 +36,18 @@ function Invoke-GeminiProvider {
     
     $apiKey = $env:GeminiKey
     
+    foreach ($Msg in $Messages) {
+        if ($Msg.role -eq 'system') {
+            $SystemRole = $Msg.content
+        }
+        elseif ($Msg.role -eq 'user') {
+            $Prompt = $Msg.content
+        }
+        else {
+            throw "Invalid message role: $($Msg.role)"
+        }
+    }
+   
     $body = @{
         'contents' = @(
             @{
@@ -65,7 +65,7 @@ function Invoke-GeminiProvider {
         $body['system_instruction'] = @{
             'parts' = @(
                 @{
-                    'text' = $SystemRole.content
+                    'text' = $SystemRole
                 }
             )
         }
