@@ -10,15 +10,12 @@
     The name of the Groq model to use (e.g., 'llama2-70b-4096', 'mixtral-8x7b-32768', 'gemma2-9b-it').
     list of models https://console.groq.com/docs/models
 
-.PARAMETER Prompt
-    The text prompt to send to the model.
-
-.PARAMETER SystemRole
-    This parameter allows you to overwrite the default system role by passing a     
-    hashtable containing the system role information with keys 'role' and 'content'.
+.PARAMETER Messages
+    An array of hashtables containing the messages to send to the model.
 
 .EXAMPLE
-    $response = Invoke-GroqProvider -ModelName 'llama3-70b-8192' -Prompt 'Explain quantum computing in simple terms'
+    $Message = New-ChatMessage -Prompt 'Explain quantum computing in simple terms'
+    $response = Invoke-GroqProvider -ModelName 'llama3-70b-8192' -Message $Message 
     
 .NOTES
     Requires the GROQ_API_KEY environment variable to be set with a valid API key.
@@ -31,16 +28,7 @@ function Invoke-GroqProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt,
-        [ValidateScript({
-            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
-                return $true
-            }
-            else {
-                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
-            }
-        })]
-        [hashtable]$SystemRole
+        [hashtable[]]$Messages
     )
     
     $headers = @{
@@ -51,15 +39,7 @@ function Invoke-GroqProvider {
     $body = @{
         'model'      = $ModelName
         'max_tokens' = 1024  # Hard-coded for Groq
-        'messages'   = @(
-            if($SystemRole) {
-                $SystemRole
-            }
-            @{
-                'role'    = 'user'
-                'content' = $Prompt
-            }
-        )
+        'messages'   = $Messages
     }
         
     $Uri = "https://api.groq.com/openai/v1/chat/completions"
