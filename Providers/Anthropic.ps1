@@ -9,15 +9,12 @@
 .PARAMETER ModelName
     The name of the Anthropic model to use (e.g., 'claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku').
 
-.PARAMETER Prompt
-    The text prompt to send to the model.
-
-.PARAMETER SystemRole
-    This parameter allows you to overwrite the default system role by passing a     
-    hashtable containing the system role information with keys 'role' and 'content'.
+.PARAMETER Messages
+    An array of hashtables containing the messages to send to the model.
 
 .EXAMPLE
-    $response = Invoke-AnthropicProvider -ModelName 'claude-3-opus' -Prompt 'Summarize the key events of World War II'
+    $Message = New-ChatMessage -Prompt 'Summarize the key events of World War II'
+    $response = Invoke-AnthropicProvider -ModelName 'claude-3-opus' -Message $Message
     
 .NOTES
     Requires the AnthropicKey environment variable to be set with a valid API key.
@@ -30,16 +27,7 @@ function Invoke-AnthropicProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt,
-        [ValidateScript({
-            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
-                return $true
-            }
-            else {
-                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
-            }
-        })]
-        [hashtable]$SystemRole
+        [hashtable[]]$Messages
     )
     
     $headers = @{
@@ -51,17 +39,19 @@ function Invoke-AnthropicProvider {
     $body = @{
         'model'      = $ModelName
         'max_tokens' = 1024  # Hard-coded for Anthropic
-        'messages'   = @(
-            @{
-                'role'    = 'user'
-                'content' = $Prompt
-            }
-        )
     }
 
-    if ($SystemRole) {
-        $body['system'] = $SystemRole.content
+    $MessagesList = @()
+    foreach ($Msg in $Messages) {
+        if ($Msg.role -eq 'system') {
+            $body['system'] = $Msg.content
+        }
+        else {
+            $MessagesList += $Msg
+        }
     }
+    
+    $body['messages'] = $MessagesList
         
     $Uri = "https://api.anthropic.com/v1/messages"
     
