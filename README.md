@@ -18,7 +18,7 @@ Currently supported providers are:
 
 ## In Action
 
-![alt text](assets/InvokeCompletion.png)
+![alt text](assets/InvokeChatCompletion.png)
 
 ## Installation
 You can install the module from the PowerShell Gallery.
@@ -58,12 +58,12 @@ Using `PSAISuite` to generate chat completion responses from different providers
 # Import the module
 Import-Module PSAISuite
 
-$models = @("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620", "azureai:gpt-4o", "nebius:yandexgpt")
+$models = @("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620", "azureai:gpt-4o", "nebius:meta-llama/Llama-3.3-70B-Instruct")
 
-$prompt="What is the capital of France?"
+$message = New-ChatMessage -Prompt "What is the capital of France?"
 
 foreach($model in $models) {
-    Invoke-ChatCompletion -Prompt $prompt -Model $model
+    Invoke-ChatCompletion -Message $message -Model $model
 }
 ```
 
