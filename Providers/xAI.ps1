@@ -9,15 +9,12 @@
 .PARAMETER ModelName
     The name of the xAI model to use (e.g., 'grok-1').
 
-.PARAMETER Prompt
-    The text prompt to send to the model.
-
-.PARAMETER SystemRole
-    This parameter allows you to overwrite the default system role by passing a     
-    hashtable containing the system role information with keys 'role' and 'content'.
+.PARAMETER Messages
+    An array of hashtables containing the messages to send to the model.
 
 .EXAMPLE
-    $response = Invoke-XAIProvider -ModelName 'grok-1' -Prompt 'Explain quantum computing'
+    $Message = New-ChatMessage -Prompt 'Explain quantum computing'
+    $response = Invoke-XAIProvider -ModelName 'grok-1' -Message $Message
     
 .NOTES
     Requires the xAIKey environment variable to be set with a valid API key.
@@ -28,16 +25,7 @@ function Invoke-XAIProvider {
         [Parameter(Mandatory)]
         [string]$ModelName,
         [Parameter(Mandatory)]
-        [string]$Prompt,
-        [ValidateScript({
-            if ($_ -is [hashtable] -and $_.ContainsKey('role') -and $_.ContainsKey('content')) {
-                return $true
-            }
-            else {
-                throw "SystemRole must be a hashtable with keys 'role' and 'content'."
-            }
-        })]
-        [hashtable]$SystemRole
+        [hashtable[]]$Messages
     )
     
     $headers = @{
@@ -47,15 +35,7 @@ function Invoke-XAIProvider {
     
     $body = @{
         'model'    = $ModelName
-        'messages' = @(
-            if($SystemRole) {
-                $SystemRole
-            }
-            @{
-                'role'    = 'user'
-                'content' = $Prompt
-            }
-        )
+        'messages' = $Messages
     }
 
     $Uri = "https://api.x.ai/v1/chat/completions"
