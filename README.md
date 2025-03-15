@@ -54,6 +54,17 @@ $env:AzureAIEndpoint = "your-azure-ai-endpoint"
 
 Using `PSAISuite` to generate chat completion responses from different providers.
 
+### List Available Providers
+
+You can list all available AI providers using the `Get-ChatProviders` function:
+
+```powershell
+# Get a list of all available providers
+Get-ChatProviders
+```
+
+### Generate Chat Completions
+
 ```powershell
 # Import the module
 Import-Module PSAISuite
