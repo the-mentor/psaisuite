@@ -20,7 +20,11 @@
     PowerShellVersion = '5.1'
     
     # Functions to export from this module
-    FunctionsToExport = @('Invoke-ChatCompletion',"New-ChatMessage")
+    FunctionsToExport = @(
+        'Get-ChatProviders',
+        'Invoke-ChatCompletion',
+        "New-ChatMessage"
+    )
     
     # Cmdlets to export from this module
     CmdletsToExport   = @()
