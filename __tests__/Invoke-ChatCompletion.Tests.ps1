@@ -42,6 +42,7 @@ Describe "Invoke-ChatCompletion" {
             $message = New-ChatMessage -Prompt "Test prompt"
             $result = Invoke-ChatCompletion -Messages $message -TextOnly
             $result | Should -BeOfType [string]
+            $env:PSAISUITE_TEXT_ONLY = $null
             # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly
         }
 
