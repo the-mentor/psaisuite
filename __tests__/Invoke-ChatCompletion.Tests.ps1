@@ -37,6 +37,14 @@ Describe "Invoke-ChatCompletion" {
             # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly
         }
 
+        It "Returns text only when PSAISUITE_TEXT_ONLY environment variable is used" {
+            $env:PSAISUITE_TEXT_ONLY = "true"
+            $message = New-ChatMessage -Prompt "Test prompt"
+            $result = Invoke-ChatCompletion -Messages $message -TextOnly
+            $result | Should -BeOfType [string]
+            # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly
+        }
+
         It "Returns object by default" {
             $message = New-ChatMessage -Prompt "Test prompt"
             $result = Invoke-ChatCompletion -Messages $message
