@@ -76,6 +76,35 @@ Describe "Invoke-ChatCompletion" {
         }
     }
 
+    Context "String input handling" {
+        It "Accepts a string and converts it to a user message" {
+            $result = Invoke-ChatCompletion -Messages "Test string prompt"
+            $result | Should -BeOfType [PSCustomObject]
+            
+            # Convert the JSON string back to an object to verify structure
+            $messagesObj = $result.Messages | ConvertFrom-Json
+            $messagesObj[0].role | Should -Be "user"
+            $messagesObj[0].content | Should -Be "Test string prompt"
+        }
+
+        It "Returns text only with string input when TextOnly switch is used" {
+            $result = Invoke-ChatCompletion -Messages "Test string prompt" -TextOnly
+            $result | Should -BeOfType [string]
+        }
+
+        It "Works with string input and specified model" {
+            $result = Invoke-ChatCompletion -Messages "Test string prompt" -Model "anthropic:claude-3-sonnet-20240229"
+            $result.Model | Should -Be "anthropic:claude-3-sonnet-20240229"
+            $result.Provider | Should -Be "anthropic"
+            $result.ModelName | Should -Be "claude-3-sonnet-20240229"
+        }
+
+        It "Includes elapsed time with string input when requested" {
+            $result = Invoke-ChatCompletion -Messages "Test string prompt" -IncludeElapsedTime
+            $result.ElapsedTime | Should -BeOfType [TimeSpan]
+        }
+    }
+
     Context "Elapsed time tracking" {
         It "Includes elapsed time in object when requested" {
             $message = New-ChatMessage -Prompt "Test prompt"
