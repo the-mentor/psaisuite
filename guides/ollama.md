@@ -2,6 +2,7 @@
 
 To use Ollama with `psaisuite` you will need to download and install Ollama https://ollama.com.
 
+Prior to using a model for the first time you will have to download it using `ollama pull <model>`
 
 ## Create a Chat Completion
 
@@ -16,6 +17,10 @@ In your code:
 ```powershell
 # Import the module
 Import-Module PSAISuite
+
+# Prior to using a model for the first time you will have to download it using ollama pull <model> 
+
+ollama pull deepseek-r1:latest
 
 $provider = "ollama"
 $model_id = "deepseek-r1:latest"
