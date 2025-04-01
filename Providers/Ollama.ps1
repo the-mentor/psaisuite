@@ -39,12 +39,22 @@ function Invoke-OllamaProvider {
     }
 
     if ($env:OLLAMA_HOST) {
-        $Uri = "http://$($env:OLLAMA_HOST)/v1/chat/completions"
+        $OllamaBaseUri = "http://$($env:OLLAMA_HOST)" 
     }
     else {
-        $Uri = "http://localhost:11434/v1/chat/completions"
+        $OllamaBaseUri = "http://localhost:11434"
+    }
+
+    try {
+        Invoke-RestMethod -Uri "$OllamaBaseUri/" | Out-Null
+    }
+    catch {
+        Write-Error "Error connecting to the Ollama's API, Check if Ollama is running! : $($_.Exception.Message)"
+        return "Error connecting to the Ollama's API, Check if Ollama is running! : $($_.Exception.Message)"
     }
     
+    $Uri = "$OllamaBaseUri/v1/chat/completions"
+
     $params = @{
         Uri     = $Uri
         Method  = 'POST'
