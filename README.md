@@ -13,6 +13,7 @@ Currently supported providers are:
 - [Groq](guides/groq.md)
 - [Mistral](guides/mistral.md)
 - [Nebius](guides/nebius.md)
+- [Ollama](guides/ollama.md)
 - [OpenAI](guides/openai.md)
 - [Perplexity](guides/perplexity.md)
 - [xAI](guides/xai.md)
