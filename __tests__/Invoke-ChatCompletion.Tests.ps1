@@ -75,7 +75,19 @@ Describe "Invoke-ChatCompletion" {
             #     $model -eq "claude-3-sonnet-20240229" -and $prompt -eq "Test prompt"
             # }
         }
-   
+
+        It "Uses specified model when provided via PSAISUITE_DEFAULT_MODEL environment variable" {
+            $env:PSAISUITE_DEFAULT_MODEL = "openai:gpt-4o"
+            $message = New-ChatMessage -Prompt "Test prompt"
+            $result = Invoke-ChatCompletion -Messages $message
+            $env:PSAISUITE_DEFAULT_MODEL = $null
+            $result | Should -BeOfType [PSCustomObject]
+            $result.Messages | Should -Be ($message | ConvertTo-Json -Compress)
+            $result.Response | Should -Not -BeNullOrEmpty
+            $result.Model | Should -Be "openai:gpt-4o"
+            # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly
+        }
+
         It "Uses specified SystemRole when provided" {
             $message = New-ChatMessage -Prompt "Test prompt" -SystemRole "system" -SystemContent "you are a helpful powershell assistant, reply only with commands"
             $result = Invoke-ChatCompletion -Messages $message 

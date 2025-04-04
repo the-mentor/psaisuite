@@ -94,6 +94,21 @@ $message = New-ChatMessage -Prompt "What is the capital of France?"
 Invoke-ChatCompletion -Message $message 
 
 ```
+### Generate Chat Completions - Using Custom Default Model
+```powershell
+# Import the module
+Import-Module PSAISuite
+
+$model = "openai:gpt-4o"
+$message = New-ChatMessage  -Prompt "What is the capital of France?"
+Invoke-ChatCompletion -Model $model -Message $message 
+
+# or by setting the environment variable
+$env:PSAISUITE_DEFAULT_MODEL = "openai:gpt-4o"
+$message = New-ChatMessage -Prompt "What is the capital of France?"
+Invoke-ChatCompletion -Message $message 
+
+```
 
 Note that the model name in the Invoke-ChatCompletion call uses the format - `<provider>:<model-name>`.
 

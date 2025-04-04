@@ -53,6 +53,11 @@ function Invoke-ChatCompletion {
         [switch]$TextOnly,
         [switch]$IncludeElapsedTime
     )
+
+    if ($env:PSAISUITE_DEFAULT_MODEL) {
+        Write-Verbose "Using default model from environment variable `$env:PSAISUITE_DEFAULT_MODEL: $env:PSAISUITE_DEFAULT_MODEL"
+        $Model = $env:PSAISUITE_DEFAULT_MODEL
+    }
     
     # Convert string input to a proper message format if needed
     if ($Messages -is [string]) {
