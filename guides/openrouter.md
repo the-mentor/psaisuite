@@ -1,7 +1,6 @@
 # OpenRouter
 
-To use OpenRotuer with `psaisuite` you will need to [create an account](https://openrouter.ai/). After logging in, go to the [API Keys](https://openrouter.ai/settings/keys) section in your account settings and generate a new key. Once you have your key, add it to your environment as follows:
-
+To use OpenRouter with `psaisuite` you will need to [create an account](https://openrouter.ai/). After logging in, go to the [API Keys](https://openrouter.ai/settings/keys) section in your account settings and generate a new key. Once you have your key, add it to your environment as follows:
 ```shell
 $env:OpenRouterKey = "your-openrouter-api-key"
 ```
