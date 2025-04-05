@@ -49,6 +49,10 @@ function Invoke-OpenRouterProvider {
     
     try {
         $response = Invoke-RestMethod @params
+        if($response.Error) {
+            Write-Error "OpenRouter API Error: $($response.Error)"
+            return "Error calling OpenRouter API: $($response.Error)"
+        }
         return $response.choices[0].message.content
     }
     catch {
