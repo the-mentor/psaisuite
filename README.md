@@ -15,6 +15,7 @@ Currently supported providers are:
 - [Nebius](guides/nebius.md)
 - [Ollama](guides/ollama.md)
 - [OpenAI](guides/openai.md)
+- [OpenRouter](guides/openrouter.md)
 - [Perplexity](guides/perplexity.md)
 - [xAI](guides/xai.md)
 
