@@ -1,3 +1,7 @@
+# v0.2.4 
+Big thank you to [the-mentor](https://github.com/the-mentor)
+- Added the OpenRouter provider and all related materials
+
 # v0.2.3
 
 Big thank you to [the-mentor](https://github.com/the-mentor)
