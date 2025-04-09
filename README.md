@@ -18,6 +18,7 @@ Currently supported providers are:
 - [OpenRouter](guides/openrouter.md)
 - [Perplexity](guides/perplexity.md)
 - [xAI](guides/xai.md)
+- [BringYourOwnAI](guides/bringyourownai.md) - Any OpenAI Compatible API!
 
 ## In Action
 
