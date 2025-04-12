@@ -12,19 +12,31 @@ Set the `GITHUB_TOKEN` environment variable:
 $env:GITHUB_TOKEN = "your-github-token"
 ```
 
-Replace `"your-github-token"` with your actual GitHub token.
+# Create a Chat Completion
 
-## Available Models
-
-GitHub offers various models. As of the last update, models like `gpt-4o-mini` were available via their inference endpoint. Model availability and names might change, so refer to official GitHub documentation for the most current list.
-
-## Usage Example
+Install `psaisuite` from the PowerShell Gallery.
 
 ```powershell
-# Ensure the GITHUB_TOKEN environment variable is set
-
-# Invoke the GitHub provider
-Invoke-ChatCompletion 'capital of france' github:gpt-4o-mini
+Install-Module PSAISuite
 ```
 
-This example sends a prompt to the `gpt-4o-mini` model via the GitHub provider and displays the response.
+In your code:
+
+```powershell
+# Import the module
+Import-Module PSAISuite
+
+Invoke-ChatCompletion 'capital of france' github:phi-4
+```
+
+```shell
+Messages  : {"role":"user","content":"capital of france"}
+Response  : The capital of France is Paris. It is the largest city in the country and serves as a major cultural,
+            economic, and political center both in France and internationally. Paris is renowned for its rich history,
+            iconic landmarks such as the Eiffel Tower, Notre-Dame Cathedral, and the Louvre Museum, as well as its
+            influence on arts, fashion, and cuisine.
+Model     : github:phi-4
+Provider  : github
+ModelName : phi-4
+Timestamp : Sat 04 12 2025 8:20:22 AM
+```
