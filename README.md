@@ -9,6 +9,7 @@ Currently supported providers are:
 - [Anthropic](guides/antrhopic.md)
 - [Azure AI Foundry](guides/azureai.md)
 - [DeepSeek](guides/deepseek.md)
+- [GitHub](guides/github.md)
 - [Google](guides/google.md)
 - [Groq](guides/groq.md)
 - [Mistral](guides/mistral.md)
@@ -41,6 +42,7 @@ Set the API keys.
 $env:OpenAIKey="your-openai-api-key"
 $env:AnthropicKey="your-anthropic-api-key"
 $env:NebiusKey="your-nebius-api-key"
+$env:GITHUB_TOKEN="your-github-token" # Add GitHub token
 # ... and so on for other providers
 ```
 
