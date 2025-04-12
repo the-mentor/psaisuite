@@ -20,13 +20,7 @@ In your code:
 # Import the module
 Import-Module PSAISuite
 
-$provider = "deepseek"
-$model_id = "deepseek-chat"
-
-# Create the model identifier
-$model = "{0}:{1}" -f $provider, $model_id
-$Message = New-ChatMessage -Prompt "What is the capital of France?"
-Invoke-ChatCompletion -Message $Message -Model $model
+Invoke-ChatCompletion 'capital of france' deepseek:deepseek-chat
 ```
 
 ```shell
