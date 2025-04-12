@@ -30,7 +30,8 @@ function Invoke-OllamaProvider {
     )
     
     $headers = @{
-        'content-type' = 'application/json'
+        'Authorization' = "Bearer $env:OllamaKey"
+        'content-type'  = 'application/json'
     }
     
     $body = @{
@@ -39,7 +40,7 @@ function Invoke-OllamaProvider {
     }
 
     if ($env:OLLAMA_HOST) {
-        $OllamaBaseUri = "http://$($env:OLLAMA_HOST)" 
+        $OllamaBaseUri = $env:OLLAMA_HOST
     }
     else {
         $OllamaBaseUri = "http://localhost:11434"

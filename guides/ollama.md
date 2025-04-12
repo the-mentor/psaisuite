@@ -4,6 +4,10 @@ To use Ollama with `psaisuite` you will need to download and install Ollama http
 
 Prior to using a model for the first time you will have to download it using `ollama pull <model>`
 
+It is possible to use a remote ollama server by setting $env:OLLAMA_HOST. 
+
+If you are using authentication on the remote server you will also need to pass the $env:OllamaKey.
+
 ## Create a Chat Completion
 
 Install `psaisuite` from the PowerShell Gallery.
