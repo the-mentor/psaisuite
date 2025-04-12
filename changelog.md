@@ -1,6 +1,10 @@
 # v0.2.5
-Big thank you to [the-mentor](https://github.com/the-mentor)
 
+- Added GitHub provider
+- Added documentation for using GitHub models
+- See [guides](guides/github.md) for setup and usage
+
+Big thank you to [the-mentor](https://github.com/the-mentor)
 - You can now use $env:OLLAMA_HOST and $env:OllamaKey
 
 # v0.2.4 
