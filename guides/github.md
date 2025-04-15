@@ -6,10 +6,10 @@ This guide provides instructions on how to use the GitHub provider with `PSAISui
 
 To use the GitHub provider, you need a GitHub token with the necessary permissions to access the models API.
 
-Set the `GITHUB_TOKEN` environment variable:
+Set the `GithubKey` environment variable:
 
 ```powershell
-$env:GITHUB_TOKEN = "your-github-token"
+$env:GithubKey = "your-github-token"
 ```
 
 # Create a Chat Completion

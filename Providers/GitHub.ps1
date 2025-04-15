@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     The Invoke-GitHubProvider function sends requests to the GitHub Models API and returns the generated content.
-    It requires a GitHub token to be set in the environment variable 'GITHUB_TOKEN'.
+    It requires a GitHub token to be set in the environment variable 'GithubKey'.
 
 .PARAMETER ModelName
     The name of the GitHub model to use (e.g., 'gpt-4o-mini'). Note: Model availability might change.
@@ -17,7 +17,7 @@
     $response = Invoke-GitHubProvider -ModelName 'gpt-4o-mini' -Messages $Message
 
 .NOTES
-    Requires the GITHUB_TOKEN environment variable to be set with a valid GitHub token with appropriate permissions.
+    Requires the GithubKey environment variable to be set with a valid GitHub token with appropriate permissions.
     The API endpoint used is 'https://models.inference.ai.azure.com/chat/completions'. This might be subject to change.
 #>
 function Invoke-GitHubProvider {
@@ -29,14 +29,14 @@ function Invoke-GitHubProvider {
         [hashtable[]]$Messages
     )
 
-    if (-not $env:GITHUB_TOKEN) {
-        Write-Error "Please set the GITHUB_TOKEN environment variable with a valid GitHub token."
+    if (-not $env:GithubKey) {
+        Write-Error "Please set the GithubKey environment variable with a valid GitHub token."
         return
     }
 
     $headers = @{
         "Content-Type"  = "application/json"
-        "Authorization" = "Bearer $($env:GITHUB_TOKEN)"
+        "Authorization" = "Bearer $($env:GithubKey)"
     }
 
     $body = @{
