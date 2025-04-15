@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     The Invoke-GroqProvider function sends requests to the Groq API and returns the generated content.
-    It requires an API key to be set in the environment variable 'GROQ_API_KEY'.
+    It requires an API key to be set in the environment variable 'GroqKey'.
 
 .PARAMETER ModelName
     The name of the Groq model to use (e.g., 'llama2-70b-4096', 'mixtral-8x7b-32768', 'gemma2-9b-it').
@@ -18,7 +18,7 @@
     $response = Invoke-GroqProvider -ModelName 'llama3-70b-8192' -Message $Message 
     
 .NOTES
-    Requires the GROQ_API_KEY environment variable to be set with a valid API key.
+    Requires the GroqKey environment variable to be set with a valid API key.
     Uses a fixed max_tokens value of 1024.
     Returns content from the 'content' field in the response.
     API Reference: https://console.groq.com/docs/api-reference
@@ -32,7 +32,7 @@ function Invoke-GroqProvider {
     )
     
     $headers = @{
-        'Authorization' = "Bearer $env:GROQ_API_KEY"
+        'Authorization' = "Bearer $env:GroqKey"
         'Content-Type'  = 'application/json'
     }
     
