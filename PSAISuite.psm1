@@ -14,5 +14,6 @@ foreach ($import in @($Public + $Providers)) {
     }
 }
 
+Set-Alias -Name icc -Value Invoke-ChatCompletion 
 # Export public functions
-Export-ModuleMember -Function $Public.BaseName
+# Export-ModuleMember -Function $Public.BaseName

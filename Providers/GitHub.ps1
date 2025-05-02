@@ -44,8 +44,7 @@ function Invoke-GitHubProvider {
         "model"    = $ModelName
     }
 
-    # Note: This endpoint might change. Refer to official GitHub documentation if issues arise.
-    $Uri = "https://models.inference.ai.azure.com/chat/completions"
+    $Uri = "https://models.github.ai/inference/chat/completions"
 
     $params = @{
         Uri     = $Uri
