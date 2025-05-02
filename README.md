@@ -57,6 +57,29 @@ $env:AzureAIEndpoint = "your-azure-ai-endpoint"
 
 ## Usage
 
+## Advanced Usage: Piping Data as Context
+
+You can pipe data directly into `Invoke-ChatCompletion` (or its alias `icc`) to use it as context for your prompt. This is useful for summarizing files, analyzing command output, or providing additional information to the model.
+
+For example:
+
+```powershell
+Get-Content .\README.md | icc -Messages "Summarize this document." -Model "openai:gpt-4o-mini"
+```
+
+You can also use the output of any command:
+
+```powershell
+Get-Process | Out-String | icc -Messages "What processes are running?" -Model "openai:gpt-4o-mini"
+```
+
+
+> **Tip:**
+> - The `-Model` parameter supports tab completion for available providers and models. Start typing a provider (like `openai:` or `github:`) and press `Tab` to see suggestions.
+> - You can use the `icc` alias instead of `Invoke-ChatCompletion` in all examples above.
+
+See [PIPE-EXAMPLES.md](./PIPE-EXAMPLES.md) for more details and examples.
+
 Using `PSAISuite` to generate chat completion responses from different providers.
 
 ### List Available Providers
