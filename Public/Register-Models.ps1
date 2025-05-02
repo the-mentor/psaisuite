@@ -40,11 +40,11 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
                 $models = $response.data.id
             }
             'xai' {
-                $response = irm https://api.x.ai/v1/models -Headers @{
+                $response = Invoke-RestMethod https://api.x.ai/v1/models -Headers @{
                     'Authorization' = "Bearer $env:xAIKey"
                     'content-type'  = 'application/json'
                 }
-                
+
                 $models = $response.data.id
             }
 
