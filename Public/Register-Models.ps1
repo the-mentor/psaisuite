@@ -19,7 +19,7 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
                 $models = $response.models.name -replace ("models/", "") 
             }
             'github' {
-                $models = (Invoke-RestMethod https://models.github.ai/catalog/models).name
+                $models = (Invoke-RestMethod https://models.github.ai/catalog/models).id
             }
             'openrouter' {
                 $models = (Invoke-RestMethod https://openrouter.ai/api/v1/models).data.id
