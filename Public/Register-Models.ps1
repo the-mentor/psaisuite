@@ -2,7 +2,7 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParams)
    
     if ($wordToComplete -notmatch ':') {
-        $completionResults = 'openai', 'google', 'github', 'openrouter', 'anthropic'
+        $completionResults = 'openai', 'google', 'github', 'openrouter', 'anthropic', 'deepseek' | Sort-Object
         $completionResults | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
             [System.Management.Automation.CompletionResult]::new("$($_):", $_, 'ParameterValue', "Provider: $_")
         }
@@ -31,8 +31,13 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
                 }
                 $models = $response.data.id
             }
-            default {
-                $models = @()
+            'deepseek' {                
+                $response = Invoke-RestMethod https://api.deepseek.com/models -Headers @{
+                    "Authorization" ="Bearer $env:DEEPSEEKKEY"
+                    "content-type"  = "application/json"
+                }
+
+                $models = $response.data.id
             }
         }
         
