@@ -2,7 +2,7 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParams)
    
     if ($wordToComplete -notmatch ':') {
-        $completionResults = 'openai', 'google', 'github', 'openrouter', 'anthropic', 'deepseek' | Sort-Object
+        $completionResults = 'openai', 'google', 'github', 'openrouter', 'anthropic', 'deepseek', 'xAI' | Sort-Object
         $completionResults | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
             [System.Management.Automation.CompletionResult]::new("$($_):", $_, 'ParameterValue', "Provider: $_")
         }
@@ -33,11 +33,24 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
             }
             'deepseek' {                
                 $response = Invoke-RestMethod https://api.deepseek.com/models -Headers @{
-                    "Authorization" ="Bearer $env:DEEPSEEKKEY"
+                    "Authorization" = "Bearer $env:DEEPSEEKKEY"
                     "content-type"  = "application/json"
                 }
 
                 $models = $response.data.id
+            }
+            'xai' {
+                $response = irm https://api.x.ai/v1/models -Headers @{
+                    'Authorization' = "Bearer $env:xAIKey"
+                    'content-type'  = 'application/json'
+                }
+                
+                $models = $response.data.id
+            }
+
+            default {
+                Write-Error "Unknown provider: $provider"
+                return
             }
         }
         
