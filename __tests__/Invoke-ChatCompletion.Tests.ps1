@@ -1,7 +1,6 @@
 BeforeAll {
     # Import the module to test
-    $ProjectRoot = Split-Path -Parent (Split-Path -Parent $PSCommandPath)
-    Import-Module "$ProjectRoot\PSAISuite.psd1" -Force
+    Import-Module "$PSScriptRoot\..\PSAISuite.psd1" -Force
 }
 
 Describe "New-ChatMessage" {
@@ -27,6 +26,29 @@ Describe "Invoke-ChatCompletion" {
         # Set up mocks for the provider functions in the PSAISuite module scope
         Mock -ModuleName PSAISuite Invoke-OpenAIProvider { param($model, $prompt) return "OpenAI Response: $prompt" }
         Mock -ModuleName PSAISuite Invoke-AnthropicProvider { param($model, $prompt) return "Anthropic Response: $prompt" }
+    }
+
+    Context "Invoke-ChatCompletion Parameters" {
+        It "Should have these parameters, in order" {
+            $parameters = (Get-Command Invoke-ChatCompletion).Parameters.Values | 
+            Where-Object { $_.Attributes.TypeId.Name -ne "AliasAttribute" } |
+            Where-Object { $_.Attributes.TypeId.Name -ne "CommonParameters" }
+
+            # Exclude the Common Parameters
+            $commonParameters = [System.Management.Automation.PSCmdlet]::CommonParameters + [System.Management.Automation.PSCmdlet]::OptionalCommonParameters
+            $filteredParameters = $parameters | Where-Object { $commonParameters -notcontains $_.Name }
+
+            $filteredParameters.Count | Should -Be 5
+
+            $filteredParameters.Name | Should -Be @("Messages", "Model", "Context", "TextOnly", "IncludeElapsedTime")
+        }
+
+        It "Should test Context parameter is valueFromPipeline" {
+            $actual = (Get-Command Invoke-ChatCompletion)
+
+            $actual.Parameters.Context | Should -Not -BeNullOrEmpty
+            $actual.Parameters.Context.Attributes.ValueFromPipeline | Should -Be $true
+        }
     }
 
     Context "Basic functionality" {
