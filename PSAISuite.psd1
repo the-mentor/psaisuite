@@ -21,9 +21,9 @@
     
     # Functions to export from this module
     FunctionsToExport = @(
-        'Get-ChatProviders',
-        'Invoke-ChatCompletion',
-        "New-ChatMessage"
+        'Get-ChatProviders'        
+        'Invoke-ChatCompletion'
+        'New-ChatMessage'
     )
     
     # Cmdlets to export from this module
@@ -33,7 +33,9 @@
     VariablesToExport = @()
     
     # Aliases to export from this module
-    AliasesToExport   = @()
+    AliasesToExport   = @(
+        'icc'
+    )
     
     # Private data to pass to the module specified in RootModule/ModuleToProcess
     PrivateData       = @{
