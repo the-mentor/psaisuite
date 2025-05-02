@@ -1,0 +1,43 @@
+Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName 'Model' -ScriptBlock {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParams)
+   
+    if ($wordToComplete -notmatch ':') {
+        $completionResults = 'openai', 'google', 'github', 'openrouter', 'anthropic'
+        $completionResults | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new("$($_):", $_, 'ParameterValue', "Provider: $_")
+        }
+    }    
+    else {
+        $provider, $partial = $wordToComplete -split ':', 2
+        switch ($provider.ToLower()) {
+            'openai' {                
+                $response = Invoke-RestMethod https://api.openai.com/v1/models -Headers @{"Authorization" = "Bearer $env:OPENAIKEY" }
+                $models = $response.data.id                 
+            }
+            'google' {
+                $response = Invoke-RestMethod https://generativelanguage.googleapis.com/v1beta/models/?key=$env:GEMINIKEY
+                $models = $response.models.name -replace ("models/", "") 
+            }
+            'github' {
+                $models = (Invoke-RestMethod https://models.github.ai/catalog/models).name
+            }
+            'openrouter' {
+                $models = (Invoke-RestMethod https://openrouter.ai/api/v1/models).data.id
+            }
+            'anthropic' {
+                $response = Invoke-RestMethod https://api.anthropic.com/v1/models -Headers @{
+                    "x-api-key"         = $env:ANTHROPICKEY
+                    "anthropic-version" = "2023-06-01"
+                }
+                $models = $response.data.id
+            }
+            default {
+                $models = @()
+            }
+        }
+        
+        $models | Where-Object { $_ -like "$partial*" } | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new("$($provider):$($_)", "$($provider):$($_)", 'ParameterValue', "Model: $($_)")
+        }
+    }
+}
