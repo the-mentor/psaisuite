@@ -1,5 +1,13 @@
 # PSAISuite
 
+[![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/PSAISuite?color=blue)](https://www.powershellgallery.com/packages/PSAISuite)
+[![PowerShell Gallery Downloads](https://img.shields.io/powershellgallery/dt/PSAISuite)](https://www.powershellgallery.com/packages/PSAISuite)
+
+[![License](https://img.shields.io/github/license/dfinke/PSAISuite)](https://github.com/dfinke/PSAISuite/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/dfinke/PSAISuite?style=social)](https://github.com/dfinke/PSAISuite)
+[![GitHub last commit](https://img.shields.io/github/last-commit/dfinke/PSAISuite)](https://github.com/dfinke/PSAISuite/commits/main)
+[![GitHub issues](https://img.shields.io/github/issues/dfinke/PSAISuite)](https://github.com/dfinke/PSAISuite/issues)
+
 Simple, unified interface to multiple Generative AI providers.
 
 `PSAISuite` makes it easy for developers to use multiple LLM through a standardized interface. Using an interface similar to OpenAI's, `PSAISuite` makes it easy to interact with the most popular LLMs and compare the results. It is a thin wrapper around the LLM endpoint, and allows creators to seamlessly swap out and test responses from different LLM providers without changing their code. Today, the library is primarily focussed on chat completions. I will expand it cover more use cases in near future.
