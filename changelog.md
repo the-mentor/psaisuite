@@ -1,3 +1,10 @@
+# v0.3.0
+
+- Added support for piping data into `Invoke-ChatCompletion` (and `icc` alias) as context for prompts.
+- Introduced `icc` alias for `Invoke-ChatCompletion` for easier usage.
+- Added tab completion for the `-Model` parameter to quickly select available providers and models.
+- Updated documentation and examples to reflect these new features.
+
 # v0.2.5
 
 - Added GitHub provider
