@@ -115,7 +115,7 @@ function Invoke-ChatCompletion {
                 'content' = "Context:\n$contextString"
             }
             # Prepend context message, then the original prompt message
-            $finalMessages = @($contextMessage) + $processedMessages
+            $finalMessages = $processedMessages + @($contextMessage)
         }
         else {
             $finalMessages = $processedMessages
