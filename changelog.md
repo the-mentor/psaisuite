@@ -1,3 +1,8 @@
+# v0.3.1
+
+- Added support for the `-Temperature` parameter in `Invoke-ChatCompletion` to control the randomness of responses.
+- Added tab completion for the `Mistral` provider to quickly select available models.
+
 # v0.3.0
 
 - Added support for piping data into `Invoke-ChatCompletion` (and `icc` alias) as context for prompts.
