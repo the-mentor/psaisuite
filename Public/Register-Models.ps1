@@ -53,7 +53,7 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
                     "Accept"        = "application/json"
                 }
 
-            w    $models = $response.data.id | Sort-Object
+                $models = $response.data.id | Sort-Object
             }
 
             default {
