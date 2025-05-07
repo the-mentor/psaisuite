@@ -3,7 +3,7 @@
     Invokes the Google Gemini API to generate responses using specified models.
 
 .DESCRIPTION
-    The Invoke-GeminiProvider function sends requests to the Google Gemini API and returns the generated content.
+    The Invoke-GoogleProvider function sends requests to the Google Gemini API and returns the generated content.
     It requires an API key to be set in the environment variable 'GeminiKey'.
 
 .PARAMETER ModelName
@@ -15,14 +15,14 @@
 
 .EXAMPLE
     $Message = New-ChatMessage -Prompt 'Explain how CRISPR works'
-    $response = Invoke-GeminiProvider -ModelName 'gemini-1.5-pro' -Message $Message
+    $response = Invoke-GoogleProvider -ModelName 'gemini-1.5-pro' -Message $Message
     
 .NOTES
     Requires the GeminiKey environment variable to be set with a valid API key.
     The API key is passed as a URL parameter rather than in the headers.
     API Reference: https://ai.google.dev/gemini-api/docs
 #>
-function Invoke-GeminiProvider {
+function Invoke-GoogleProvider {
     param(
         [Parameter(Mandatory)]
         [string]$ModelName,
@@ -31,7 +31,7 @@ function Invoke-GeminiProvider {
     )
     
     if (-not $env:GeminiKey) {
-        throw "Gemini API key not found. Please set the GeminiKey environment variable."
+        throw "Google Gemini API key not found. Please set the GeminiKey environment variable."
     }
     
     $apiKey = $env:GeminiKey
@@ -71,7 +71,7 @@ function Invoke-GeminiProvider {
         }
     }
 
-    # Gemini uses the API key as a URL parameter
+    # Google Gemini uses the API key as a URL parameter
     # Fix model name - should be exactly as Google specifies (don't add prefix)
     # $Uri = "https://generativelanguage.googleapis.com/v1/models/$ModelName`:generateContent?key=$apiKey"
     
@@ -86,13 +86,13 @@ function Invoke-GeminiProvider {
     
     try {
         $response = Invoke-RestMethod @params
-        # Gemini has a different response structure
+        # Google Gemini has a different response structure
         return $response.candidates[0].content.parts[0].text
     }
     catch {
         $statusCode = $_.Exception.Response.StatusCode.value__
         $errorMessage = $_.ErrorDetails.Message
-        Write-Error "Gemini API Error (HTTP $statusCode): $errorMessage"
-        return "Error calling Gemini API: $($_.Exception.Message)"
+        Write-Error "Google Gemini API Error (HTTP $statusCode): $errorMessage"
+        return "Error calling Google Gemini API: $($_.Exception.Message)"
     }
 }
