@@ -1,7 +1,8 @@
 # v0.3.1
 
-- Added support for the `-Temperature` parameter in `Invoke-ChatCompletion` to control the randomness of responses.
 - Added tab completion for the `Mistral` provider to quickly select available models.
+- Renamed to Gemini to Google provider.
+- Fixed order of messages in the `Invoke-ChatCompletion` function to ensure the correct sequence of user and assistant messages.
 
 # v0.3.0
 
