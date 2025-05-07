@@ -2,7 +2,7 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParams)
    
     if ($wordToComplete -notmatch ':') {
-        $completionResults = 'openai', 'google', 'github', 'openrouter', 'anthropic', 'deepseek', 'xAI' | Sort-Object
+        $completionResults = 'openai', 'google', 'github', 'openrouter', 'anthropic', 'deepseek', 'xAI', 'mistral' | Sort-Object
         $completionResults | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
             [System.Management.Automation.CompletionResult]::new("$($_):", $_, 'ParameterValue', "Provider: $_")
         }
@@ -46,6 +46,14 @@ Register-ArgumentCompleter -CommandName 'Invoke-ChatCompletion' -ParameterName '
                 }
 
                 $models = $response.data.id
+            }
+            'mistral' {
+                $response = Invoke-RestMethod https://api.mistral.ai/v1/models -Headers @{
+                    "Authorization" = "Bearer $env:MistralKey"
+                    "Accept"        = "application/json"
+                }
+
+                $models = $response.data.id | Sort-Object
             }
 
             default {
