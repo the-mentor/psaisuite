@@ -50,7 +50,7 @@ Set the API keys.
 $env:OpenAIKey="your-openai-api-key"
 $env:AnthropicKey="your-anthropic-api-key"
 $env:NebiusKey="your-nebius-api-key"
-$env:GITHUB_TOKEN="your-github-token" # Add GitHub token
+$env:GithubKey="your-github-token" # Add GitHub token
 # ... and so on for other providers
 ```
 
