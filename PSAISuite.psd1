@@ -3,7 +3,7 @@
     RootModule        = 'PSAISuite.psm1'
     
     # Version number of this module.
-    ModuleVersion     = '0.3.1'
+    ModuleVersion     = '0.4.0'
     
     # ID used to uniquely identify this module
     GUID              = 'f5a37b81-6a5a-4b5c-a6e1-2b8a5f9c2fd8'
@@ -35,6 +35,7 @@
     # Aliases to export from this module
     AliasesToExport   = @(
         'icc'
+        'generateText'
     )
     
     # Private data to pass to the module specified in RootModule/ModuleToProcess
