@@ -75,6 +75,7 @@ For example:
 Get-Content .\README.md | icc -Messages "Summarize this document." -Model "openai:gpt-4o-mini"
 ```
 
+
 You can also use the output of any command:
 
 ```powershell
@@ -82,9 +83,10 @@ Get-Process | Out-String | icc -Messages "What processes are running?" -Model "o
 ```
 
 
+
 > **Tip:**
 > - The `-Model` parameter supports tab completion for available providers and models. Start typing a provider (like `openai:` or `github:`) and press `Tab` to see suggestions.
-> - You can use the `icc` alias instead of `Invoke-ChatCompletion` in all examples above.
+> - You can use the `icc` or `generateText` alias instead of `Invoke-ChatCompletion` in all examples above.
 
 See [PIPE-EXAMPLES.md](./PIPE-EXAMPLES.md) for more details and examples.
 
@@ -99,6 +101,7 @@ You can list all available AI providers using the `Get-ChatProviders` function:
 Get-ChatProviders
 ```
 
+
 ### Generate Chat Completions
 
 ```powershell
@@ -110,23 +113,20 @@ $models = @("openai:gpt-4o", "anthropic:claude-3-5-sonnet-20240620", "azureai:gp
 $message = New-ChatMessage -Prompt "What is the capital of France?"
 
 foreach($model in $models) {
-    Invoke-ChatCompletion -Message $message -Model $model
+    Invoke-ChatCompletion -Messages $message -Model $model
 }
 ```
 
-### Generate Chat Completions - Return Text Only
+### Generate Chat Completions - Get Full Response Object
 ```powershell
 # Import the module
 Import-Module PSAISuite
 
 $message = New-ChatMessage -Prompt "What is the capital of France?"
-Invoke-ChatCompletion -Message $message -TextOnly
-# or by setting the environment variable
+Invoke-ChatCompletion -Messages $message -Raw
 
-$env:PSAISUITE_TEXT_ONLY=$true
-$message = New-ChatMessage -Prompt "What is the capital of France?"
-Invoke-ChatCompletion -Message $message 
-
+# You can also use the alias:
+generateText -Messages $message -Raw
 ```
 ### Generate Chat Completions - Using Custom Default Model
 ```powershell
@@ -135,14 +135,14 @@ Import-Module PSAISuite
 
 $model = "openai:gpt-4o"
 $message = New-ChatMessage  -Prompt "What is the capital of France?"
-Invoke-ChatCompletion -Model $model -Message $message 
+Invoke-ChatCompletion -Model $model -Messages $message 
 
 # or by setting the environment variable
 $env:PSAISUITE_DEFAULT_MODEL = "openai:gpt-4o"
 $message = New-ChatMessage -Prompt "What is the capital of France?"
-Invoke-ChatCompletion -Message $message 
-
+Invoke-ChatCompletion -Messages $message 
 ```
+
 
 Note that the model name in the Invoke-ChatCompletion call uses the format - `<provider>:<model-name>`.
 
