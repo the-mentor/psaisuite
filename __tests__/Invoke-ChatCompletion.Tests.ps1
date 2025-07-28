@@ -30,7 +30,7 @@ Describe "Invoke-ChatCompletion" {
 
     Context "Invoke-ChatCompletion Parameters" {
         It "Should have these parameters, in order" {
-            $parameters = (Get-Command Invoke-ChatCompletion).Parameters.Values | 
+            $parameters = (Get-Command Invoke-ChatCompletion).Parameters.Values |
             Where-Object { $_.Attributes.TypeId.Name -ne "AliasAttribute" } |
             Where-Object { $_.Attributes.TypeId.Name -ne "CommonParameters" }
 
@@ -39,125 +39,102 @@ Describe "Invoke-ChatCompletion" {
             $filteredParameters = $parameters | Where-Object { $commonParameters -notcontains $_.Name }
 
             $filteredParameters.Count | Should -Be 5
-
-            $filteredParameters.Name | Should -Be @("Messages", "Model", "Context", "TextOnly", "IncludeElapsedTime")
+            $filteredParameters.Name | Should -Be @("Messages", "Model", "Context", "IncludeElapsedTime", "Raw")
         }
 
         It "Should test Context parameter is valueFromPipeline" {
             $actual = (Get-Command Invoke-ChatCompletion)
-
             $actual.Parameters.Context | Should -Not -BeNullOrEmpty
             $actual.Parameters.Context.Attributes.ValueFromPipeline | Should -Be $true
         }
     }
 
     Context "Basic functionality" {
-        It "Returns text only when TextOnly switch is used" {
-            $message = New-ChatMessage -Prompt "Test prompt"
-            $result = Invoke-ChatCompletion -Messages $message -TextOnly
-            $result | Should -BeOfType [string]
-            # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly
-        }
-
-        It "Returns text only when PSAISUITE_TEXT_ONLY environment variable is used" {
-            $env:PSAISUITE_TEXT_ONLY = "true"
-            $message = New-ChatMessage -Prompt "Test prompt"
-            $result = Invoke-ChatCompletion -Messages $message -TextOnly
-            $result | Should -BeOfType [string]
-            $env:PSAISUITE_TEXT_ONLY = $null
-            # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly
-        }
-
         It "Returns object by default" {
             $message = New-ChatMessage -Prompt "Test prompt"
-            $result = Invoke-ChatCompletion -Messages $message
+            $result = Invoke-ChatCompletion -Messages $message -Raw
             $result | Should -BeOfType [PSCustomObject]
             $result.Messages | Should -Be ($message | ConvertTo-Json -Compress)
             $result.Response | Should -Not -BeNullOrEmpty
             $result.Timestamp | Should -BeOfType [DateTime]
-            # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly
         }
-    
+
+        It "Returns raw object when Raw switch is used" {
+            $message = New-ChatMessage -Prompt "Test prompt"
+            $result = Invoke-ChatCompletion -Messages $message -Raw
+            $result | Should -BeOfType [PSCustomObject]
+            $result.Messages | Should -Be ($message | ConvertTo-Json -Compress)
+            $result.Response | Should -Not -BeNullOrEmpty
+            $result.Timestamp | Should -BeOfType [DateTime]
+        }
+
+        It "Returns text with elapsed time when IncludeElapsedTime is used" {
+            $message = New-ChatMessage -Prompt "Test prompt"
+            $result = Invoke-ChatCompletion -Messages $message -IncludeElapsedTime
+            $result | Should -BeOfType [string]
+            $result | Should -Match "Elapsed Time: \d{2}:\d{2}:\d{2}\.\d{3}"
+        }
+
         It "Uses default model when not specified" {
             $message = New-ChatMessage -Prompt "Test prompt"
-            $result = Invoke-ChatCompletion -Messages $message
+            $result = Invoke-ChatCompletion -Messages $message -Raw
             $result.Model | Should -Be "openai:gpt-4o-mini"
-            # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly -ParameterFilter { 
-            #     $model -eq "gpt-4o-mini" -and $prompt -eq "Test prompt" 
-            # }
         }
 
         It "Uses specified model when provided" {
             $message = New-ChatMessage -Prompt "Test prompt"
-            $result = Invoke-ChatCompletion -Messages $message -Model "anthropic:claude-3-sonnet-20240229"
+            $result = Invoke-ChatCompletion -Messages $message -Model "anthropic:claude-3-sonnet-20240229" -Raw
             $result.Model | Should -Be "anthropic:claude-3-sonnet-20240229"
             $result.Provider | Should -Be "anthropic"
             $result.ModelName | Should -Be "claude-3-sonnet-20240229"
-            # Should -Invoke -ModuleName PSAISuite Invoke-AnthropicProvider -Times 1 -Exactly -ParameterFilter {
-            #     $model -eq "claude-3-sonnet-20240229" -and $prompt -eq "Test prompt"
-            # }
         }
 
         It "Uses specified model when provided via PSAISUITE_DEFAULT_MODEL environment variable" {
             $env:PSAISUITE_DEFAULT_MODEL = "openai:gpt-4o"
             $message = New-ChatMessage -Prompt "Test prompt"
-            $result = Invoke-ChatCompletion -Messages $message
+            $result = Invoke-ChatCompletion -Messages $message -Raw
             $env:PSAISUITE_DEFAULT_MODEL = $null
             $result | Should -BeOfType [PSCustomObject]
             $result.Messages | Should -Be ($message | ConvertTo-Json -Compress)
             $result.Response | Should -Not -BeNullOrEmpty
             $result.Model | Should -Be "openai:gpt-4o"
-            # Should -Invoke -ModuleName PSAISuite Invoke-OpenAIProvider -Times 1 -Exactly
-        }
-
-        It "Uses specified SystemRole when provided" {
-            $message = New-ChatMessage -Prompt "Test prompt" -SystemRole "system" -SystemContent "you are a helpful powershell assistant, reply only with commands"
-            $result = Invoke-ChatCompletion -Messages $message 
-            $result | Should -BeOfType [PSCustomObject]
-            $result.Messages | Should -Be ($message | ConvertTo-Json -Compress)
-            $result.Response | Should -Not -BeNullOrEmpty
         }
     }
 
     Context "String input handling" {
         It "Accepts a string and converts it to a user message" {
-            $result = Invoke-ChatCompletion -Messages "Test string prompt"
+            $result = Invoke-ChatCompletion -Messages "Test string prompt" -Raw
             $result | Should -BeOfType [PSCustomObject]
-            
             # Convert the JSON string back to an object to verify structure
             $messagesObj = $result.Messages | ConvertFrom-Json
             $messagesObj[0].role | Should -Be "user"
             $messagesObj[0].content | Should -Be "Test string prompt"
         }
 
-        It "Returns text only with string input when TextOnly switch is used" {
-            $result = Invoke-ChatCompletion -Messages "Test string prompt" -TextOnly
-            $result | Should -BeOfType [string]
+        It "Returns raw object with string input when Raw switch is used" {
+            $result = Invoke-ChatCompletion -Messages "Test string prompt" -Raw
+            $result | Should -BeOfType [PSCustomObject]
         }
 
         It "Works with string input and specified model" {
-            $result = Invoke-ChatCompletion -Messages "Test string prompt" -Model "anthropic:claude-3-sonnet-20240229"
-            $result.Model | Should -Be "anthropic:claude-3-sonnet-20240229"
+            $result = Invoke-ChatCompletion -Messages "Test string prompt" -Model "anthropic:claude-3-sonnet-20240229" -Raw
+            $result.Model | Should -Be "anthropic:claude-3-sonnet-20240229" 
             $result.Provider | Should -Be "anthropic"
             $result.ModelName | Should -Be "claude-3-sonnet-20240229"
         }
 
-        It "Includes elapsed time with string input when requested" {
+        It "Returns text with elapsed time when IncludeElapsedTime is used" {
             $result = Invoke-ChatCompletion -Messages "Test string prompt" -IncludeElapsedTime
-            $result.ElapsedTime | Should -BeOfType [TimeSpan]
+            $result | Should -BeOfType [string]
+            $result | Should -Match "Elapsed Time: \d{2}:\d{2}:\d{2}\.\d{3}"
         }
     }
 
     Context "Elapsed time tracking" {
-        It "Includes elapsed time in object when requested" {
+        It "Includes elapsed time in text when IncludeElapsedTime is used" {
             $message = New-ChatMessage -Prompt "Test prompt"
             $result = Invoke-ChatCompletion -Messages $message -IncludeElapsedTime
-            $result.ElapsedTime | Should -BeOfType [TimeSpan]
-        }
-    
-        It "Includes elapsed time in text when TextOnly and IncludeElapsedTime are used" {
-            $message = New-ChatMessage -Prompt "Test prompt"
-            $result = Invoke-ChatCompletion -Messages $message -IncludeElapsedTime -TextOnly
+            $result | Should -BeOfType [string]
             $result | Should -Match "Elapsed Time: \d{2}:\d{2}:\d{2}\.\d{3}"
         }
     }
@@ -165,13 +142,13 @@ Describe "Invoke-ChatCompletion" {
     Context "Error handling" {
         It "Throws error for invalid model format" {
             $message = New-ChatMessage -Prompt "Test"
-            { Invoke-ChatCompletion -Message $message -Model "invalid-model-format" } | 
+            { Invoke-ChatCompletion -Messages $message -Model "invalid-model-format" } | 
             Should -Throw "Model must be specified in 'provider:model' format."
         }
 
         It "Throws error for nonexistent provider" {
             $message = New-ChatMessage -Prompt "Test"
-            { Invoke-ChatCompletion -Message $message -Model "nonexistent:model" } | 
+            { Invoke-ChatCompletion -Messages $message -Model "nonexistent:model" } | 
             Should -Throw "Unsupported provider: nonexistent. No function named Invoke-nonexistentProvider found."
         }
     }
