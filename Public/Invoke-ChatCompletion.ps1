@@ -3,7 +3,7 @@
 Invokes a completion request to a specified AI model provider.
 
 .DESCRIPTION
-The Invoke-ChatCompletion function sends a prompt to a specified AI model provider and returns the completion response. 
+The Invoke-ChatCompletion function sends a prompt to a specified AI model provider and returns the completion response text by default. 
 The model provider and model name must be specified in the 'provider:model' format. The function dynamically constructs 
 the provider-specific function name and invokes it to get the response. It can also accept context via the pipeline.
 
@@ -18,21 +18,20 @@ Context provided via the pipeline. This will be prepended to the Messages as a u
 .PARAMETER Model
 The model to be used for the completion request, specified in 'provider:model' format. Defaults to "openai:gpt-4o-mini".
 
-.PARAMETER TextOnly
-A switch parameter that, if specified, returns only the response text. If not specified, a custom object containing 
-the response text, model information, and timestamp is returned.
-
 .PARAMETER IncludeElapsedTime
 A switch parameter that, if specified, measures and includes the elapsed time of the API request in the output.
+
+.PARAMETER Raw
+A switch parameter that, if specified, returns the full response object (PSCustomObject) instead of just the response text.
 
 .EXAMPLE
 $Message = New-ChatMessage -Prompt "Hello, world!"
 Invoke-ChatCompletion -Messages $Message -Model "openai:gpt-4o-mini"
 
-Sends the prompt "Hello, world!" to the OpenAI GPT-4o-mini model and returns the completion response.
+Sends the prompt "Hello, world!" to the OpenAI GPT-4o-mini model and returns the completion response text.
 
 .EXAMPLE
-Invoke-ChatCompletion -Messages "Hello, world!" -Model "openai:gpt-4o-mini" -TextOnly
+Invoke-ChatCompletion -Messages "Hello, world!" -Model "openai:gpt-4o-mini"
 
 Sends the string "Hello, world!" as a user message to the OpenAI GPT-4o-mini model and returns only the completion response text.
 
@@ -40,10 +39,10 @@ Sends the string "Hello, world!" as a user message to the OpenAI GPT-4o-mini mod
 $Message = New-ChatMessage -Prompt "Hello, world!"
 Invoke-ChatCompletion -Messages $Message -Model "openai:gpt-4o-mini" -IncludeElapsedTime
 
-Sends the prompt and returns the completion response with the elapsed time information.
+Sends the prompt and returns the completion response text with the elapsed time information.
 
 .EXAMPLE
-Get-Content .\\README.md | Invoke-ChatCompletion -Messages "Summarize this document." -Model "openai:gpt-4o-mini"
+Get-Content .\README.md | Invoke-ChatCompletion -Messages "Summarize this document." -Model "openai:gpt-4o-mini"
 
 Sends the content of README.md as context along with the prompt "Summarize this document." to the model.
 
@@ -51,6 +50,11 @@ Sends the content of README.md as context along with the prompt "Summarize this 
 "This is context from the pipeline" | Invoke-ChatCompletion -Messages "Explain the context." -Model "openai:gpt-4o-mini"
 
 Sends the pipeline string as context along with the prompt "Explain the context." to the model.
+
+.EXAMPLE
+Invoke-ChatCompletion -Messages "Show raw output" -Raw
+
+Returns the full response object (PSCustomObject) instead of just the response text.
 
 .NOTES
 The function dynamically constructs the provider-specific function name based on the provider specified in the Model 
@@ -61,26 +65,26 @@ Pipeline input is treated as context and prepended to the messages.
 function Invoke-ChatCompletion {
     [CmdletBinding()]
     param(
+        [Parameter(Mandatory = $true, Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Alias('Prompt')]
         [object]$Messages,
 
+        [Parameter(Position = 1)]
         [string]$Model = "openai:gpt-4o-mini",
         
-        [Parameter(ValueFromPipeline)] # Accepts pipeline input, not positional
-        [object]$Context, # Changed from [string] to [object]
-    
-        [switch]$TextOnly,
-        [switch]$IncludeElapsedTime
+        [Parameter(ValueFromPipeline)]
+        [object]$Context,
+
+        [switch]$IncludeElapsedTime,
+        [switch]$Raw
     )
 
     Begin {
-        # Initialize a list to collect pipeline input
         $pipedContext = [System.Collections.Generic.List[string]]::new()
     }
 
     Process {
-        # Collect pipeline input
         if ($PSBoundParameters.ContainsKey('Context')) {
-            # Convert the pipeline object to string before adding
             $pipedContext.Add(($Context | Out-String).Trim())
         }
     }
@@ -91,7 +95,6 @@ function Invoke-ChatCompletion {
             $Model = $env:PSAISUITE_DEFAULT_MODEL
         }
 
-        # Process the main Messages parameter
         $processedMessages = @()
         if ($Messages -is [string]) {
             $processedMessages += @{
@@ -103,25 +106,21 @@ function Invoke-ChatCompletion {
             $processedMessages = $Messages
         }
         else {
-            # Assuming $Messages is a single hashtable message
             $processedMessages += $Messages
         }
 
-        # Prepend piped context if it exists
         if ($pipedContext.Count -gt 0) {
             $contextString = $pipedContext -join "`n"
             $contextMessage = @{
                 'role'    = 'user'
-                'content' = "Context:\n$contextString"
+                'content' = "Context:`n$contextString"
             }
-            # Prepend context message, then the original prompt message
             $finalMessages = $processedMessages + @($contextMessage)
         }
         else {
             $finalMessages = $processedMessages
         }
 
-        # Parse provider and model from the Model parameter
         if ($Model -match "^([^:]+):(.+)$") {
             $provider = $Matches[1].ToLower()
             $modelName = $Matches[2]
@@ -130,23 +129,19 @@ function Invoke-ChatCompletion {
             throw "Model must be specified in 'provider:model' format."
         }
 
-        # Dynamically construct provider function name
         $providerFunction = "Invoke-${provider}Provider"
 
-        # Check if the provider function exists
         if (-not (Get-Command $providerFunction -ErrorAction SilentlyContinue)) {
             throw "Unsupported provider: $provider. No function named $providerFunction found."
         }
 
-        # Start measuring execution time if requested
         if ($IncludeElapsedTime) {
             $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
         }
 
-        # Invoke the provider-specific implementation
         $functionParams = @{
             ModelName = $modelName
-            Messages  = $finalMessages # Use the potentially modified messages array
+            Messages  = $finalMessages
         }
 
         if ($SystemRole) {
@@ -155,43 +150,37 @@ function Invoke-ChatCompletion {
 
         $responseText = & $providerFunction @functionParams
 
-        # Stop measuring execution time if requested
         if ($IncludeElapsedTime) {
             $stopwatch.Stop()
             $elapsedTime = $stopwatch.Elapsed
         }
 
-        # Return the result based on the TextOnly switch
-        if ($TextOnly -or [System.Convert]::ToBoolean($env:PSAISUITE_TEXT_ONLY)) {
-            # Format the text output to include the elapsed time if requested
-            if ($IncludeElapsedTime) {
-                return "$responseText`n`nElapsed Time: $($elapsedTime.ToString('hh\:mm\:ss\.fff'))"
-            }
-            else {
-                return $responseText
-            }
+        $responseObject = [PSCustomObject]@{
+            Messages  = ($finalMessages | ConvertTo-Json -Compress)
+            Response  = $responseText
+            Model     = $Model
+            Provider  = $provider
+            ModelName = $modelName
+            Timestamp = Get-Date
+        }
+
+        if ($IncludeElapsedTime) {
+            $responseObject | Add-Member -MemberType NoteProperty -Name 'ElapsedTime' -Value $elapsedTime
+        }
+
+        if ($SystemRole) {
+            $responseObject | Add-Member -MemberType NoteProperty -Name 'SystemRole' -Value $SystemRole
+        }
+
+        if ($Raw) {
+            return $responseObject
+        }
+
+        if ($IncludeElapsedTime) {
+            return "$responseText`n`nElapsed Time: $($elapsedTime.ToString('hh\:mm\:ss\.fff'))"
         }
         else {
-            # Create the base response object
-            $responseObject = [PSCustomObject]@{
-                Messages  = ($finalMessages | ConvertTo-Json -Compress) # Use finalMessages
-                Response  = $responseText
-                Model     = $Model
-                Provider  = $provider
-                ModelName = $modelName
-                Timestamp = Get-Date
-            }
-
-            # Add elapsed time if requested
-            if ($IncludeElapsedTime) {
-                $responseObject | Add-Member -MemberType NoteProperty -Name 'ElapsedTime' -Value $elapsedTime
-            }
-
-            if ($SystemRole) {
-                $responseObject | Add-Member -MemberType NoteProperty -Name 'SystemRole' -Value $SystemRole
-            }
-
-            return $responseObject
+            return $responseText
         }
     }
 }

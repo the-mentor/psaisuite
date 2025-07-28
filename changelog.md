@@ -1,3 +1,13 @@
+
+# v0.4.0
+
+- Added `generateText` alias for `Invoke-ChatCompletion` for easier usage.
+- Changed default output of `Invoke-ChatCompletion` to return response text (use `-Raw` to get the full object).
+- Removed `-TextOnly` parameter, added `-Raw` parameter for full response object.
+- Updated help and examples for `Invoke-ChatCompletion` to reflect new behavior and parameters.
+- Improved context handling and message ordering in `Invoke-ChatCompletion`.
+- Minor documentation and provider updates.
+
 # v0.3.1
 
 - Added tab completion for the `Mistral` provider to quickly select available models.
