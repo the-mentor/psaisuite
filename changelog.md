@@ -1,4 +1,10 @@
 
+
+# v0.5.1
+
+- Added `Get-OpenRouterModel` function to list OpenRouter models supporting tools, with wildcard search capability.
+- Added `Get-GitHubModel` function to list GitHub AI models with wildcard search capability.
+
 # v0.4.0
 
 - Added `generateText` alias for `Invoke-ChatCompletion` for easier usage.
