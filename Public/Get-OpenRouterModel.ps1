@@ -18,9 +18,31 @@ Returns all models supporting tools.
 #>
 function Get-OpenRouterModel {
     param(
-        [string]$Name = '*'
+        [string]$Name = '*',
+        [int]$LastWeeks = 0
     )
+
     $models = Invoke-RestMethod https://openrouter.ai/api/v1/models
 
-    $models.data.id | Where-Object { $_ -like $Name } | Sort-Object
+    $foundModels = foreach ($model in $models.data) {
+        if ($model.id -like $Name) {
+            [PSCustomObject]@{
+                Id      = $model.id
+                Created = Get-Date ([datetime]::UnixEpoch.AddSeconds($model.created)).ToString("yyyy-MM-dd")
+            }
+        }
+    }
+
+    $today = Get-Date            
+
+    $threeWeeksAgo = $today.AddDays( - $($LastWeeks * 7))
+    
+    if ($LastWeeks -eq 0) {
+        return $foundModels
+    }
+
+    $foundModels | Where-Object {
+        $modelDate = $_.Created
+        $modelDate -ge $threeWeeksAgo -and $modelDate -le $today
+    } | Sort-Object Created
 }
