@@ -16,5 +16,3 @@ foreach ($import in @($Public + $Providers)) {
 
 Set-Alias -Name icc -Value Invoke-ChatCompletion 
 Set-Alias -Name generateText -Value Invoke-ChatCompletion 
-
-Export-ModuleMember -Function $Public.BaseName
