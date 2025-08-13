@@ -18,10 +18,19 @@ Returns all models.
 #>
 function Get-GitHubModel {
     param(
-        [string]$Name = '*'
+        [string]$Name = '*',
+        [switch]$Raw
     )
 
     $models = Invoke-RestMethod https://models.github.ai/catalog/models
-    
-    $models.id | Where-Object { $_ -like $Name } | Sort-Object
+
+    if ($Raw) {
+        # Return all properties for matching models
+        return $models | Select-Object -ExpandProperty id | Where-Object { $_ -like $Name } | ForEach-Object {
+            $models.data | Where-Object { $_.id -eq $_ }
+        }
+    }
+    else {
+        $models.id | Where-Object { $_ -like $Name } | Sort-Object
+    }
 }

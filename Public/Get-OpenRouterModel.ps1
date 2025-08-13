@@ -19,30 +19,42 @@ Returns all models supporting tools.
 function Get-OpenRouterModel {
     param(
         [string]$Name = '*',
-        [int]$LastWeeks = 0
+        [int]$LastWeeks = 0,
+        [switch]$Raw
     )
 
     $models = Invoke-RestMethod https://openrouter.ai/api/v1/models
 
-    $foundModels = foreach ($model in $models.data) {
-        if ($model.id -like $Name) {
-            [PSCustomObject]@{
-                Id      = $model.id
-                Created = Get-Date ([datetime]::UnixEpoch.AddSeconds($model.created)).ToString("yyyy-MM-dd")
+    if ($Raw) {
+        # Return all properties for matching models
+        $matchingModels = $models.data | Where-Object { $_.id -like $Name }
+        if ($LastWeeks -gt 0) {
+            $today = Get-Date
+            $threeWeeksAgo = $today.AddDays( - $($LastWeeks * 7))
+            $matchingModels = $matchingModels | Where-Object {
+                $modelDate = Get-Date ([datetime]::UnixEpoch.AddSeconds($_.created)).ToString("yyyy-MM-dd")
+                $modelDate -ge $threeWeeksAgo -and $modelDate -le $today
             }
         }
+        return $matchingModels
+    } else {
+        $foundModels = foreach ($model in $models.data) {
+            if ($model.id -like $Name) {
+                [PSCustomObject]@{
+                    Id      = $model.id
+                    Created = Get-Date ([datetime]::UnixEpoch.AddSeconds($model.created)).ToString("yyyy-MM-dd")
+                }
+            }
+        }
+
+        $today = Get-Date            
+        $threeWeeksAgo = $today.AddDays( - $($LastWeeks * 7))
+        if ($LastWeeks -eq 0) {
+            return $foundModels
+        }
+        $foundModels | Where-Object {
+            $modelDate = $_.Created
+            $modelDate -ge $threeWeeksAgo -and $modelDate -le $today
+        } | Sort-Object Created
     }
-
-    $today = Get-Date            
-
-    $threeWeeksAgo = $today.AddDays( - $($LastWeeks * 7))
-    
-    if ($LastWeeks -eq 0) {
-        return $foundModels
-    }
-
-    $foundModels | Where-Object {
-        $modelDate = $_.Created
-        $modelDate -ge $threeWeeksAgo -and $modelDate -le $today
-    } | Sort-Object Created
 }
