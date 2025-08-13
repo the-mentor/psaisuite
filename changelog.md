@@ -1,4 +1,21 @@
+# v0.5.2
 
+- Invoke-ChatCompletion:
+    - You can omit `-Messages`/`-Prompt` when piping context into `-Context`; piped input becomes the user message.
+    - When both `-Messages` and piped `-Context` are provided, the context is added as a separate user message prefixed with "Context:".
+- Get-OpenRouterModel improvements:
+    - Added -LastWeeks to filter models by recent creation date.
+    - Added -Raw to return full model metadata; default view shows Id and Created date.
+    - Sorting and simple date filtering for quick discovery of new models.
+- Get-GitHubModel improvements:
+    - Added -Raw to return full model metadata in addition to simple Id listing.
+    - Minor endpoint/format alignment and sorting.
+- Azure AI provider updates:
+    - Auto-select API version; uses 2024-12-01-preview for o3-mini deployments.
+    - Uses max_completion_tokens and removes unsupported parameters; clearer error messages.
+- Argument completer:
+    - Expanded live model completion for providers: openai, google, github, openrouter, anthropic, deepseek, xai, mistral.
+- Misc: small documentation touch-ups and provider consistency fixes.
 
 # v0.5.1
 
