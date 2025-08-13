@@ -8,12 +8,13 @@ The model provider and model name must be specified in the 'provider:model' form
 the provider-specific function name and invokes it to get the response. It can also accept context via the pipeline.
 
 .PARAMETER Messages
-The messages to be sent to the AI model for completion. This parameter is mandatory and can accept either:
+The messages to be sent to the AI model for completion. This parameter is optional and can accept either:
 - A string, which will be wrapped in a user message automatically
 - A hashtable array containing properly formatted chat messages
+If not provided, and content is piped to -Context, the piped content will be used as the message.
 
 .PARAMETER Context
-Context provided via the pipeline. This will be prepended to the Messages as a user message.
+Context provided via the pipeline. If -Messages is also provided, the context will be prepended as a separate user message labeled "Context:". If -Messages is not provided, the piped context will be used as the message.
 
 .PARAMETER Model
 The model to be used for the completion request, specified in 'provider:model' format. Defaults to "openai:gpt-4o-mini".
@@ -52,6 +53,11 @@ Sends the content of README.md as context along with the prompt "Summarize this 
 Sends the pipeline string as context along with the prompt "Explain the context." to the model.
 
 .EXAMPLE
+Get-Content .\README.md | Invoke-ChatCompletion -Model "openai:gpt-4o-mini"
+
+Uses the piped README.md content as the message when -Messages is not specified.
+
+.EXAMPLE
 Invoke-ChatCompletion -Messages "Show raw output" -Raw
 
 Returns the full response object (PSCustomObject) instead of just the response text.
@@ -65,7 +71,7 @@ Pipeline input is treated as context and prepended to the messages.
 function Invoke-ChatCompletion {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Position = 0, ValueFromPipelineByPropertyName = $true)]
         [Alias('Prompt')]
         [object]$Messages,
 
@@ -84,38 +90,57 @@ function Invoke-ChatCompletion {
     }
 
     Process {
-        if ($PSBoundParameters.ContainsKey('Context')) {
+        # Capture explicit -Context and pipeline-bound input
+        if ($null -ne $Context) {
             $pipedContext.Add(($Context | Out-String).Trim())
         }
     }
 
     End {
+        # Require either -Messages or piped -Context
+        if ($null -eq $Messages -and $pipedContext.Count -eq 0) {
+            throw "No input provided. Provide -Messages or pipe content into -Context."
+        }
+
         if ($env:PSAISUITE_DEFAULT_MODEL) {
             Write-Verbose "Using default model from environment variable `$env:PSAISUITE_DEFAULT_MODEL: $env:PSAISUITE_DEFAULT_MODEL"
             $Model = $env:PSAISUITE_DEFAULT_MODEL
         }
 
         $processedMessages = @()
-        if ($Messages -is [string]) {
-            $processedMessages += @{
-                'role'    = 'user'
-                'content' = $Messages
+        if ($null -ne $Messages) {
+            if ($Messages -is [string]) {
+                $processedMessages += @{
+                    'role'    = 'user'
+                    'content' = $Messages
+                }
             }
-        }
-        elseif ($Messages -is [array]) {
-            $processedMessages = $Messages
-        }
-        else {
-            $processedMessages += $Messages
+            elseif ($Messages -is [array]) {
+                $processedMessages = $Messages
+            }
+            else {
+                $processedMessages += $Messages
+            }
         }
 
         if ($pipedContext.Count -gt 0) {
             $contextString = $pipedContext -join "`n"
-            $contextMessage = @{
-                'role'    = 'user'
-                'content' = "Context:`n$contextString"
+            if ($null -eq $Messages) {
+                # Use piped context as the message when -Messages is not provided
+                $processedMessages += @{
+                    'role'    = 'user'
+                    'content' = $contextString
+                }
+                $finalMessages = $processedMessages
             }
-            $finalMessages = $processedMessages + @($contextMessage)
+            else {
+                # When both are present, add context as a separate note
+                $contextMessage = @{
+                    'role'    = 'user'
+                    'content' = "Context:`n$contextString"
+                }
+                $finalMessages = $processedMessages + @($contextMessage)
+            }
         }
         else {
             $finalMessages = $processedMessages
