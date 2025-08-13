@@ -103,6 +103,23 @@ You can list all available AI providers using the `Get-ChatProviders` function:
 Get-ChatProviders
 ```
 
+### List OpenRouter Models by Name and Get All Properties
+
+You can list OpenRouter models by name using the `Get-OpenRouterModel` function. Use the `-Raw` switch to return all properties for matching models:
+
+```powershell
+# List all OpenRouter models with 'gpt' in their name
+Get-OpenRouterModel -Name '*gpt*'
+
+# List all OpenRouter models and return all properties
+Get-OpenRouterModel -Raw
+
+# List models by name and return all properties
+Get-OpenRouterModel -Name '*gpt*' -Raw
+```
+
+The `-Raw` switch returns the full model object from the OpenRouter API, including all available properties.
+
 
 ### Generate Chat Completions
 
